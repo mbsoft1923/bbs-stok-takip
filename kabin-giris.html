@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahar Beauty Studio - Kabin Giriş</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght=0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #f0f4f8; padding: 30px 20px; font-family: 'Playfair Display', serif; min-height: 100vh; }
+        .wrapper { max-width: 1340px; margin: 0 auto; width: 100%; }
+        
+        .global-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background-color: white; padding: 15px 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 6px solid #00a8b5; width: 100%; }
+        .global-header-title-area { display: flex; flex-direction: column; text-align: left; }
+        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #00a8b5; line-height: 1.1; margin-bottom: 2px; }
+        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
+        .global-btn-back { font-family: 'Segoe UI', sans-serif; background-color: #e0f7fa; color: #00a8b5; border: 1px solid #b2ebf2; padding: 10px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; transition: all 0.25s; font-size: 0.9rem; white-space: nowrap; }
+        .global-btn-back:hover { background-color: #00a8b5; color: white; transform: scale(1.02); }
+
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; width: 100%; }
+        @media (max-width: 900px) { .grid-container { grid-template-columns: 1fr; } }
+        
+        .card { background-color: white; border-radius: 14px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: fit-content; margin-bottom: 25px; }
+        .card-title { font-size: 1.1rem; color: #1e293b; margin-bottom: 18px; font-weight: 700; border-bottom: 2px dashed #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #475569; font-weight: 600; font-size: 0.9rem; font-family: 'Segoe UI', sans-serif; }
+        .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; font-size: 0.95rem; outline: none; font-family: 'Segoe UI', sans-serif; transition: all 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color: #00a8b5; background-color: white; box-shadow: 0 0 0 3px rgba(0, 168, 181, 0.1); }
+        
+        .danisan-input-wrapper { display: flex; gap: 8px; align-items: center; }
+        .danisan-input-wrapper input[type="text"] { flex: 2; }
+        .danisan-input-wrapper input[type="date"] { flex: 1; padding: 11px; border: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; font-size: 0.95rem; outline: none; font-family: 'Segoe UI', sans-serif; }
+        .btn-add-danisan { background-color: #00a8b5; color: white; border: none; padding: 11px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; white-space: nowrap; }
+
+        .google-list-container { max-height: 160px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; margin-top: 10px; padding: 4px; }
+        
+        .danisan-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-family: 'Segoe UI', sans-serif; font-size: 0.825rem; color: #334155; transition: background 0.2s; border-radius: 6px; margin-bottom: 2px; user-select: none; }
+        .danisan-item:hover { background-color: #f0fdfa; }
+        .danisan-item.selected { background-color: #e6fffa; border-left: 4px solid #00a8b5; font-weight: 600; }
+        
+        .danisan-metin-alani { flex: 1; display: flex; flex-direction: column; text-align: left; min-width: 0; }
+        .danisan-isim-satiri { font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 6px; }
+        .danisan-aksiyon-butonlari { display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-left: 10px; }
+        
+        .btn-danisan-duzenle { background-color: #e0f2fe; color: #0369a1; border: none; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all 0.2s; }
+        .btn-danisan-duzenle:hover { background-color: #0369a1; color: white; }
+        
+        .btn-danisan-sil { background-color: #fee2e2; color: #b91c1c; border: none; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all 0.2s; }
+        .btn-danisan-sil:hover { background-color: #b91c1c; color: white; }
+        
+        .danisan-duzenleme-alani { display: flex; gap: 6px; width: 100%; align-items: center; }
+        .danisan-duzenleme-input { padding: 6px 8px; border: 2px solid #00a8b5; border-radius: 6px; font-size: 0.825rem; flex: 1; outline: none; font-family: 'Segoe UI', sans-serif; }
+        .btn-duzenleme-kaydet { background-color: #10b981; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+
+        .btn-seans-ekle { width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: 'Segoe UI', sans-serif; background-color: #00a8b5; color: white; transition: all 0.2s; }
+        .btn-seans-ekle:hover { background-color: #008c96; }
+
+        .stok-table { width: 100%; border-collapse: collapse; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; margin-top: 15px; }
+        .stok-table th { background-color: #f8fafc; color: #475569; text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; font-weight: 600; }
+        .stok-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+        
+        .sepet-ozet-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 2px solid #e2e8f0; font-family: 'Segoe UI', sans-serif; flex-wrap: wrap; gap: 15px; }
+        .finans-ozet-kutulari { display: flex; gap: 20px; }
+        .finans-skor-kart { background: #f8fafc; padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.95rem; font-weight: 700; color: #334155; }
+        .finans-skor-kart span { color: #00a8b5; }
+        
+        .btn-seansi-bitir { background-color: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; gap: 8px; }
+        .btn-tablo-sil { background-color: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+
+        .mor-arsiv-sorgu-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 15px; margin-bottom: 25px; font-family: 'Segoe UI', sans-serif; width: 100%; }
+        .arsiv-sorgu-sol { display: flex; align-items: center; gap: 12px; }
+        .arsiv-sorgu-sol label { font-weight: 700; color: #475569; font-size: 0.9rem; white-space: nowrap; }
+        .mor-arsiv-sorgu-bar input[type="date"] { padding: 9px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 0.9rem; outline: none; }
+        
+        .btn-arsiv-getir { background-color: #6366f1; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
+        .btn-arsiv-getir:hover { background-color: #4f46e5; }
+
+        .arsiv-panel { background-color: #faf5ff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 25px; margin-top: 25px; }
+        .arsiv-title { font-size: 1.1rem; color: #6b21a8; font-weight: 700; margin-bottom: 15px; border-bottom: 2px dashed #e9d5ff; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        
+        .arsiv-ozet-bar { display: flex; justify-content: flex-start; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 2px solid #e9d5ff; font-family: 'Segoe UI', sans-serif; flex-wrap: wrap; gap: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="global-page-header">
+            <div class="global-header-title-area">
+                <span class="global-header-brand">Bahar Beauty Studio</span>
+                <span class="global-header-sub">| Kabin Ürün Tüketim Giriş Paneli</span>
+            </div>
+            <a href="dashboard.html" class="global-btn-back">🏠 Ana Yönetim Paneli</a>
+        </div>
+
+        <div class="grid-container">
+            <div class="card">
+                <div class="card-title">👤 İşlemi Yapan Uzman ve Danışan</div>
+                <div class="form-group">
+                    <label>Hizmeti Veren Estetisyen / Uzman Seçin</label>
+                    <select id="uzmanSecim"><option value="">-- Uzmanlar Yükleniyor... --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Hizmet Alan Danışan Adı Soyadı <span style="color:#6366f1; font-weight:700;">(Seçmek ve Arşivi Getirmek İçin İsme Tıklayın)</span></label>
+                    <div class="danisan-input-wrapper">
+                        <input type="text" id="danisanInput" placeholder="Danışan adını yazın..." oninput="danisanAra(this.value)">
+                        <input type="date" id="danisanKayitTarihi" style="display:none;">
+                        <button class="btn-add-danisan" onclick="yeniDanisanEkle()"><i class="fas fa-plus"></i> Yeni Ekle</button>
+                    </div>
+                    <div class="google-list-container" id="danisanListesi"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🧴 Kullanılan Sarf Ürün ve Miktar</div>
+                <div class="form-group">
+                    <label>Tüketilen Ürün Grubu (Kategori)</label>
+                    <select id="urunKategori" onchange="kategoriDegisti(this.value)"><option value="">-- Kategori Seçin --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Ürün Çeşidi / Kalan Hacim</label>
+                    <select id="urunDetay"><option value="">-- Önce Kategori Seçin --</option></select>
+                </div>
+                <div class="grid-container" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Tüketilen Miktar (ml/Adet)</label>
+                        <input type="number" id="tuketilenMiktar" placeholder="Örn: 30">
+                    </div>
+                    <div class="form-group">
+                        <label>Alınan Ücret (Gelir TL)</label>
+                        <input type="number" id="alunanUcret" placeholder="Örn: 3500">
+                    </div>
+                </div>
+                <button class="btn-seans-ekle" onclick="sepetiEkleOrGuncelle()">✨ Ürünü Aşağıdaki Seansa Ekle</button>
+            </div>
+        </div>
+
+        <div class="mor-arsiv-sorgu-bar">
+            <div class="arsiv-sorgu-sol">
+                <label><i class="fa-solid fa-clock-rotate-left" style="color:#6366f1;"></i> Arşiv Tarih Filtresi:</label>
+                <input type="date" id="sorguBaslangicTarihi" onchange="arsivEkrandaFiltrele()">
+                <span style="color:#64748b; font-weight:bold; font-size: 0.85rem;">-</span>
+                <input type="date" id="sorguBitisTarihi" onchange="arsivEkrandaFiltrele()">
+            </div>
+            <button class="btn-arsiv-getir" onclick="arsivVerisiniYenile()"><i class="fa-solid fa-cloud-arrow-down"></i> Arşivi Yükle / Yenile</button>
+        </div>
+
+        <div class="card" style="width:100%;">
+            <div class="card-title">📝 Seans Detay Listesi ve Finansal Hesaplar</div>
+            <div style="overflow-x:auto;">
+                <table class="stok-table">
+                    <thead>
+                        <tr>
+                            <th>Ürün / İşlem Adı</th>
+                            <th>Kategori</th>
+                            <th>Tüketilen Miktar</th>
+                            <th>Alınan Gelir (Ciro)</th>
+                            <th>Ürün Maliyeti (Masraf)</th>
+                            <th>Net Kâr</th>
+                            <th style="text-align:center;">Kaldır</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sepetGövde">
+                        <tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:20px;">Henüz bir sarf malzeme girişi eklenmedi.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="sepet-ozet-bar">
+                <div class="finans-ozet-kutulari">
+                    <div class="finans-skor-kart">Toplam Gelir: <span id="toplamGelirYazi">0</span> TL</div>
+                    <div class="finans-skor-kart">Toplam Masraf: <span id="toplamMasrafYazi" style="color:#ef4444;">0</span> TL</div>
+                    <div class="finans-skor-kart">Toplam Net Kâr: <span id="toplamKarYazi" style="color:#10b981;">0</span> TL</div>
+                </div>
+                <button class="btn-seansi-bitir" onclick="seansiBitir()"><i class="fa-solid fa-cloud-arrow-up"></i> Seansı Onayla ve Bitir</button>
+            </div>
+        </div>
+
+        <div class="card arsiv-panel" id="arsivGosterimAlani" style="display:none;">
+            <div class="arsiv-title"><i class="fa-solid fa-folder-open"></i> <span id="arsivBaslikYazisi">Danışan Geçmiş Seans Verileri</span></div>
+            <div style="overflow-x:auto;">
+                <table class="stok-table" style="background:white; border-radius:8px;">
+                    <thead>
+                        <tr style="background:#f3e8ff;">
+                            <th>Tarih / Saat</th>
+                            <th>Uzman</th>
+                            <th>Kullanılan Ürün</th>
+                            <th>Alınan Gelir (Ciro)</th>
+                            <th>Masraf (Maliyet)</th>
+                            <th style="text-align:center;">Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody id="arsivGövde"></tbody>
+                </table>
+            </div>
+            
+            <div class="arsiv-ozet-bar">
+                <div class="finans-ozet-kutulari">
+                    <div class="finans-skor-kart" style="background:#fff; border-color:#d8b4fe;">Arşiv Toplam Ciro: <span id="arsivToplamCiroYazi">0</span> TL</div>
+                    <div class="finans-skor-kart" style="background:#fff; border-color:#d8b4fe;">Arşiv Toplam Masraf: <span id="arsivToplamMasrafYazi" style="color:#ef4444;">0</span> TL</div>
+                    <div class="finans-skor-kart" style="background:#fff; border-color:#d8b4fe;">Arşiv Net Kâr: <span id="arsivToplamKarYazi" style="color:#10b981;">0</span> TL</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
+        
+        let globalDanisanlar = []; let globalStoklar = []; let globalKategoriler = [];
+        let globalSeansGecmisi = []; let globalUzmanlar = []; let aktifSepet = [];
+        let secilenDanisan = ""; let gonderimKuyrugu = []; let mevcutIslemIndeksi = 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const bugun = new Date();
+            const yyyy = bugun.getFullYear();
+            const mm = String(bugun.getMonth() + 1).padStart(2, '0');
+            const dd = String(bugun.getDate()).padStart(2, '0');
+            document.getElementById('danisanKayitTarihi').value = `${yyyy}-${mm}-${dd}`;
+            paralelVeriYukle();
+        });
+
+        function paralelVeriYukle() {
+            [{act:'getkategoriler',cb:'paralelKatGeri'},{act:'getstok',cb:'paralelStokGeri'},{act:'getdanisanlar',cb:'paralelDanisanGeri'},{act:'getseanslar',cb:'paralelSeansGeri'},{act:'getkullanicilar',cb:'paralelUzmanGeri'}].forEach(b => {
+                const s = document.createElement('script'); s.src = `${API_URL}?action=${b.act}&callback=${b.cb}&_t=${Date.now()}`; document.body.appendChild(s);
+            });
+        }
+
+        window.paralelKatGeri = function(res) {
+            let ham = Array.isArray(res) ? res : [];
+            if(ham.length > 0) {
+                let txt = ham[0].katergoriAdi || ham[0].kategoriAdi || String(ham[0]);
+                if(txt.toLowerCase().replace(/\s/g,"") === "kategoriadi" || txt.toLowerCase().replace(/\s/g,"") === "katergoriadi") ham.shift();
+            }
+            globalKategoriler = ham; kategoriKutusunuDoldur();
+        };
+        window.paralokStokGeri = function(res) { globalStoklar = Array.isArray(res) ? res : []; };
+        window.paralelStokGeri = function(res) { globalStoklar = Array.isArray(res) ? res : []; };
+        window.paralelDanisanGeri = function(res) { globalDanisanlar = Array.isArray(res) ? res : []; danisanAra(document.getElementById('danisanInput').value || ""); };
+        window.paralelSeansGeri = function(res) { globalSeansGecmisi = Array.isArray(res) ? res : []; if(secilenDanisan) arsivEkrandaFiltrele(); };
+        window.paralelUzmanGeri = function(res) {
+            let ham = Array.isArray(res) ? res : [];
+            if(ham.length>0 && String(ham[0].adSoyad).toLowerCase().replace(/\s/g,"")==="adsoyad") ham.shift();
+            globalUzmanlar = ham;
+            const s = document.getElementById('uzmanSecim'); s.innerHTML = '<option value="">-- Uzman Seçin --</option>';
+            globalUzmanlar.forEach(u => {
+                let n = u.adSoyad || (typeof u === "string" ? u : "");
+                if(n.trim() && n.toLowerCase() !== "sistem kurucusu") {
+                    const opt = document.createElement('option'); opt.value = n.trim(); opt.textContent = n.trim(); s.appendChild(opt);
+                }
+            });
+        };
+
+        function kategoriKutusunuDoldur() {
+            const s = document.getElementById('urunKategori'); s.innerHTML = '<option value="">-- Kategori Seçin --</option>';
+            globalKategoriler.forEach(k => {
+                let name = k.katergoriAdi || k.kategoriAdi || (typeof k === "string" ? k : "");
+                if(name && String(name).trim() !== "") {
+                    const opt = document.createElement('option'); opt.value = String(name).trim(); opt.textContent = String(name).trim(); s.appendChild(opt);
+                }
+            });
+        }
+
+        function kategoriDegisti(kat) {
+            const s = document.getElementById('urunDetay'); s.innerHTML = '<option value="">-- Ürün Seçin --</option>';
+            if(!kat) return;
+            globalStoklar.filter(x => x.kategori && String(x.kategori).trim().toLowerCase() === String(kat).trim().toLowerCase()).forEach(p => {
+                const opt = document.createElement('option'); opt.value = p.urunAdi; opt.textContent = `${p.urunAdi} (Kalan: ${p.kalanHacim} ${p.birim || 'ml'})`; s.appendChild(opt);
+            });
+        }
+
+        function danisanAra(val) {
+            const list = document.getElementById('danisanListesi'); list.innerHTML = "";
+            globalDanisanlar.filter(x => {
+                let name = x.danisanAdiSoyadi || x.danisanadsoyad || x.adsoyad || x.adSoyad || "";
+                return String(name).toLowerCase().includes(val.toLowerCase());
+            }).forEach(d => {
+                const name = d.danisanAdiSoyadi || d.danisanadsoyad || d.adsoyad || d.adSoyad;
+                let dbId = d.danisanid || d.id || d.danışanid || "";
+                if(!dbId && Object.values(d).length > 0) { dbId = Object.values(d)[0]; }
+                
+                let checkName = String(name).toLowerCase().trim();
+                if(name && checkName !== "danisanadisoyadi" && checkName !== "danisanadsoyad" && checkName !== "adsoyad") {
+                    const safeDOMId = btoa(encodeURIComponent(name)).replace(/=/g, '');
+                    const div = document.createElement('div'); 
+                    div.className = `danisan-item ${secilenDanisan === name ? 'selected' : ''}`;
+                    
+                    div.innerHTML = `
+                        <div class="danisan-metin-alani" id="text-container-${safeDOMId}" onclick="danisaniSecildi('${name.replace(/'/g, "\\'")}')">
+                            <div class="danisan-isim-satiri">👤 <span>${name}</span></div>
+                        </div>
+                        <div class="danisan-aksiyon-butonlari">
+                            <button class="btn-danisan-duzenle" title="Düzenle" onclick="danisanDuzenlemeModuAc('${name.replace(/'/g, "\\'")}', '${dbId}', event)"><i class="fas fa-edit"></i></button>
+                            <button class="btn-danisan-sil" title="Sil" onclick="danisanSilVeritabanindan('${name.replace(/'/g, "\\'")}', '${dbId}', event)"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                }
+            });
+        }
+
+        function danisaniSecildi(name) {
+            secilenDanisan = name; 
+            document.getElementById('danisanInput').value = name; 
+            danisanAra(name);
+            arsivEkrandaFiltrele();
+        }
+
+        function danisanDuzenlemeModuAc(eskiIsim, dbId, event) {
+            event.stopPropagation();
+            const safeDOMId = btoa(encodeURIComponent(eskiIsim)).replace(/=/g, '');
+            const container = document.getElementById(`text-container-${safeDOMId}`);
+            if(!container) return;
+            
+            container.removeAttribute('onclick'); 
+            container.innerHTML = `
+                <div class="danisan-duzenleme-alani">
+                    <input type="text" class="danisan-duzenleme-input" id="input-edit-${safeDOMId}" value="${eskiIsim}" onclick="event.stopPropagation()">
+                    <button class="btn-duzenleme-kaydet" onclick="danisanGuncelleVeritabaninda('${eskiIsim.replace(/'/g, "\\'")}', '${dbId}', event)">💾 Kaydet</button>
+                </div>
+            `;
+        }
+
+        function danisanGuncelleVeritabaninda(eskiIsim, dbId, event) {
+            event.stopPropagation();
+            const safeDOMId = btoa(encodeURIComponent(eskiIsim)).replace(/=/g, '');
+            const yeniIsim = document.getElementById(`input-edit-${safeDOMId}`).value.trim();
+            if(!yeniIsim) { alert("İsim alanı boş bırakılamaz!"); return; }
+            document.getElementById(`input-edit-${safeDOMId}`).disabled = true;
+            
+            const script = document.createElement('script');
+            script.src = `${API_URL}?action=guncelledanisan&id=${encodeURIComponent(dbId)}&eskiAd=${encodeURIComponent(eskiIsim)}&danisanid=${encodeURIComponent(dbId)}&adSoyad=${encodeURIComponent(yeniIsim)}&yeniAd=${encodeURIComponent(yeniIsim)}&callback=danisanGuncelleSonuc`;
+            document.body.appendChild(script);
+        }
+
+        window.danisanGuncelleSonuc = function(res) {
+            paralelVeriYukle();
+        };
+
+        function danisanSilVeritabanindan(isim, dbId, event) {
+            event.stopPropagation();
+            if(confirm(`"${isim}" isimli danışanı veritabanından kalıcı olarak silmek istediğinize emin misiniz?`)) {
+                const script = document.createElement('script');
+                script.src = `${API_URL}?action=sildanisan&id=${encodeURIComponent(dbId)}&danisanid=${encodeURIComponent(dbId)}&adSoyad=${encodeURIComponent(isim)}&danisanAdiSoyadi=${encodeURIComponent(isim)}&callback=danisanSilSonuc`;
+                document.body.appendChild(script);
+            }
+        }
+
+        window.danisanSilSonuc = function(res) {
+            alert("🗑️ Danışan veritabanından başarıyla silindi.");
+            if(document.getElementById('danisanInput').value === secilenDanisan) {
+                document.getElementById('danisanInput').value = "";
+                secilenDanisan = "";
+            }
+            paralelVeriYukle();
+        };
+
+        function yeniDanisanEkle() {
+            let name = document.getElementById('danisanInput').value.trim();
+            if(!name) { alert("Lütfen önce eklenecek danışanın adını yazınız."); return; }
+            
+            let maxNum = 0;
+            globalDanisanlar.forEach(d => {
+                let currentId = String(d.danisanid || d.id || d.danışanid || "").toUpperCase().replace(/\s/g, "");
+                if (currentId.includes("CLIENT-")) {
+                    let num = parseInt(currentId.split("CLIENT-")[1], 10);
+                    if (!isNaN(num) && num > maxNum) maxNum = num;
+                } else if (currentId.includes("CLIENT_")) {
+                    let num = parseInt(currentId.split("CLIENT_")[1], 10);
+                    if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            let yeniId = "Client-" + String(maxNum + 1).padStart(5, '0');
+
+            let bugun = new Date();
+            let gun = String(bugun.getDate()).padStart(2, '0');
+            let ay = String(bugun.getMonth() + 1).padStart(2, '0');
+            let yil = bugun.getFullYear();
+            let ddmmyyyy = `${gun}.${ay}.${yil}`;
+            let yyyymmdd = `${yil}-${ay}-${gun}`;
+
+            const script = document.createElement('script');
+            let url = `${API_URL}?action=ekledanisan&id=${encodeURIComponent(yeniId)}&danisanid=${encodeURIComponent(yeniId)}&adSoyad=${encodeURIComponent(name)}&danisanAdiSoyadi=${encodeURIComponent(name)}&rol=danisan&tablo=salonDanisanlari&tip=D&tarih=${encodeURIComponent(ddmmyyyy)}&kayitTarihi=${encodeURIComponent(yyyymmdd)}&kayittarihi=${encodeURIComponent(ddmmyyyy)}&callback=danisanEkleSonuc`;
+            
+            script.src = url;
+            document.body.appendChild(script);
+        }
+
+        window.danisanEkleSonuc = function(res) {
+            alert("👤 Yeni Danışan Başarıyla Kaydedildi!");
+            document.getElementById('danisanInput').value = "";
+            paralelVeriYukle();
+        };
+
+        function sepetiEkleOrGuncelle() {
+            const urun = document.getElementById('urunDetay').value;
+            const miktar = parseFloat(document.getElementById('tuketilenMiktar').value) || 0;
+            const gelir = parseFloat(document.getElementById('alunanUcret').value) || 0;
+            const kat = document.getElementById('urunKategori').value;
+
+            if(!secilenDanisan) { alert("Lütfen önce danışan listesinden bir danışan seçin!"); return; }
+            if(!urun) { alert("Lütfen ürün seçin!"); return; }
+            if(miktar <= 0) { alert("Lütfen geçerli miktar girin!"); return; }
+
+            let sk = globalStoklar.find(x => x.urunAdi === urun);
+            let bm = sk ? (parseFloat(sk.birimMaliyet) || 0) : 0;
+            let masraf = miktar * bm;
+
+            aktifSepet.push({ urunadi: urun, kategori: kat, miktar: miktar, gelir: gelir, masraf: masraf, kar: gelir - masraf });
+            document.getElementById('tuketilenMiktar').value = ""; document.getElementById('alunanUcret').value = "";
+            sepetiCiz();
+        }
+
+        function sepetiCiz() {
+            const tbody = document.getElementById('sepetGövde');
+            let tg = 0; let tm = 0; let tk = 0;
+            if(aktifSepet.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:20px;">Henüz bir sarf malzeme girişi eklenmedi.</td></tr>`;
+                document.getElementById('toplamGelirYazi').textContent = "0"; document.getElementById('toplamMasrafYazi').textContent = "0"; document.getElementById('toplamKarYazi').textContent = "0"; return;
+            }
+            tbody.innerHTML = "";
+            aktifSepet.forEach((item, index) => {
+                tg += item.gelir; tm += item.masraf; tk += item.kar;
+                tbody.innerHTML += `<tr><td><strong>${item.urunadi}</strong></td><td>${item.kategori}</td><td>${item.miktar} ml/Adet</td><td style="color:#00a8b5; font-weight:600;">₺${item.gelir.toFixed(2)}</td><td style="color:#ef4444; font-weight:600;">₺${item.masraf.toFixed(2)}</td><td style="color:#10b981; font-weight:600;">₺${item.kar.toFixed(2)}</td><td style="text-align:center;"><button class="btn-tablo-sil" onclick="sepettenCikar(${index})">❌</button></td></tr>`;
+            });
+            document.getElementById('toplamGelirYazi').textContent = tg.toFixed(2); document.getElementById('toplamMasrafYazi').textContent = tm.toFixed(2); document.getElementById('toplamKarYazi').textContent = tk.toFixed(2);
+        }
+
+        function sepettenCikar(idx) { aktifSepet.splice(idx,1); sepetiCiz(); }
+
+        function seansiBitir() {
+            if(aktifSepet.length === 0) { alert("Sepet boş!"); return; }
+            const uz = document.getElementById('uzmanSecim').value;
+            if(!uz) { alert("Lütfen uzman seçin!"); return; }
+            gonderimKuyrugu = [...aktifSepet]; mevcutIslemIndeksi = 0;
+            kuyrukElemaniGonder();
+        }
+
+        // 🎯 PC EKRAN SAATİNİ TÜM PARAMETRELERLE SUNUCUYA ENJEKTE EDEN GARANTİ MOTOR
+        function kuyrukElemaniGonder() {
+            if (mevcutIslemIndeksi >= gonderimKuyrugu.length) {
+                alert("✅ Seans Başarıyla Kaydedildi ve Stoklar Güncellendi!");
+                aktifSepet = []; sepetiCiz(); paralelVeriYukle(); return;
+            }
+            const uz = document.getElementById('uzmanSecim').value;
+            const el = gonderimKuyrugu[mevcutIslemIndeksi];
+
+            // Saf JavaScript ile bilgisayarınızın o anki ekran saatini kesin olarak yakalıyoruz.
+            const pcZamani = new Date();
+            const yyyy = pcZamani.getFullYear();
+            const mm = String(pcZamani.getMonth() + 1).padStart(2, '0');
+            const dd = String(pcZamani.getDate()).padStart(2, '0');
+            const hh = String(pcZamani.getHours()).padStart(2, '0');
+            const min = String(pcZamani.getMinutes()).padStart(2, '0');
+            const ss = String(pcZamani.getSeconds()).padStart(2, '0');
+
+            // Farklı backend versiyonları için olası tüm varyasyon formatları hazırlandı:
+            const formatStandart = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+            const formatTR = `${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
+
+            const script = document.createElement('script');
+            
+            // Arka plandaki Google Script'in sunucu saatini kullanmasını engellemek için, 
+            // gelebilecek tüm anahtar tarih parametrelerini (islemTarihi, tarih, seansTarihi vb.) ve
+            // her bir zaman parçasını (yil, ay, gun, saat) ayrı ayrı url'e ekleyerek motoru bilgisayar saatine mecbur bırakıyoruz.
+            script.src = `${API_URL}?action=addseans` +
+                         `&uzmanAdSoyad=${encodeURIComponent(uz)}` +
+                         `&danisanAdSoyad=${encodeURIComponent(secilenDanisan)}` +
+                         `&islemTipi=${encodeURIComponent(el.kategori)}` +
+                         `&urunAdi=${encodeURIComponent(el.urunadi)}` +
+                         `&tuketimMiktari=${el.miktar}` +
+                         `&gelir=${el.gelir}` +
+                         `&masraf=${el.masraf}` +
+                         `&islemTarihi=${encodeURIComponent(formatStandart)}` +
+                         `&tarih=${encodeURIComponent(formatStandart)}` +
+                         `&seansTarihi=${encodeURIComponent(formatStandart)}` +
+                         `&islemTarihiSaat=${encodeURIComponent(formatStandart)}` +
+                         `&tarihTR=${encodeURIComponent(formatTR)}` +
+                         `&pcYil=${yyyy}&pcAy=${mm}&pcGun=${dd}&pcSaat=${hh}&pcDakika=${min}&pcSaniye=${ss}` +
+                         `&callback=kuyrukSonucAl`;
+                         
+            document.body.appendChild(script);
+        }
+
+        window.kuyrukSonucAl = function(res) {
+            if(res.status === "success") { mevcutIslemIndeksi++; kuyrukElemaniGonder(); } 
+            else { alert("Kayıt sırasında hata oluştu: " + res.message); paralelVeriYukle(); }
+        };
+
+        function arsivVerisiniYenile() {
+            const script = document.createElement('script');
+            script.src = `${API_URL}?action=getseanslar&callback=arsivYenilemeGeri`;
+            document.body.appendChild(script);
+        }
+
+        window.arsivYenilemeGeri = function(res) {
+            globalSeansGecmisi = Array.isArray(res) ? res : [];
+            if(secilenDanisan) { arsivEkrandaFiltrele(); }
+        };
+
+        function arsivEkrandaFiltrele() {
+            if(!secilenDanisan) { return; }
+            const panel = document.getElementById('arsivGosterimAlani'); const tbody = document.getElementById('arsivGövde');
+            
+            const baslangicInput = document.getElementById('sorguBaslangicTarihi').value;
+            const bitisInput = document.getElementById('sorguBitisTarihi').value;
+
+            function tarihYorumla(tarihStr) {
+                if (!tarihStr) return null;
+                tarihStr = String(tarihStr).trim();
+                if (tarihStr.includes(' ')) tarihStr = tarihStr.split(' ')[0];
+
+                if (tarihStr.includes('-')) {
+                    const [y, m, d] = tarihStr.split('-');
+                    return new Date(y, m - 1, d, 0, 0, 0);
+                }
+                if (tarihStr.includes('.')) {
+                    const [d, m, y] = tarihStr.split('.');
+                    return new Date(y, m - 1, d, 0, 0, 0);
+                }
+                const parsed = new Date(tarihStr);
+                return isNaN(parsed.getTime()) ? null : parsed;
+            }
+
+            let baslangicTarihi = tarihYorumla(baslangicInput);
+            let bitisTarihi = tarihYorumla(bitisInput);
+            if (bitisTarihi) bitisTarihi.setHours(23, 59, 59, 999);
+
+            let filtrelenen = globalSeansGecmisi.filter(x => {
+                let dName = x.danisanAdi || x.danisanAdSoyad || x.danisanadisoyadi || x.danisanadsoyad || x.adsoyad || x.adSoyad || '';
+                const isimUygun = String(dName).trim().toLowerCase() === secilenDanisan.trim().toLowerCase();
+                if (!isimUygun) return false;
+
+                let seansZamaniStr = x.islemTarihi || x.tarih || x.islemTarihiSaat || '';
+                let seansTarihi = tarihYorumla(seansZamaniStr);
+
+                if (seansTarihi) {
+                    if (baslangicTarihi && seansTarihi < baslangicTarihi) return false;
+                    if (bitisTarihi && seansTarihi > bitisTarihi) return false;
+                }
+                return true;
+            });
+            
+            document.getElementById('arsivBaslikYazisi').textContent = `📋 ${secilenDanisan} - İşlem Arşivi`;
+            tbody.innerHTML = ""; 
+            panel.style.display = "block";
+            
+            if(filtrelenen.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#6b21a8;">Belirtilen kriterlerde arşiv kaydı bulunamadı.</td></tr>`; 
+                document.getElementById('arsivToplamCiroYazi').textContent = "0.00";
+                document.getElementById('arsivToplamMasrafYazi').textContent = "0.00";
+                document.getElementById('arsivToplamKarYazi').textContent = "0.00";
+                return; 
+            }
+            
+            let arsivCiroSum = 0;
+            let arsivMasrafSum = 0;
+
+            filtrelenen.forEach(k => {
+                let tamTarihSaat = k.islemTarihi || k.tarih || k.islemTarihiSaat || '';
+                let urunIsmi = k.urunAdi || k.urunadi || k.urun || 'Belirtilmedi';
+                let uzmanIsmi = k.uzman || k.uzmanAdSoyad || k.uzmanadsoyad || 'Belirtilmedi';
+
+                let ciroTutari = parseFloat(k.gelir !== undefined ? k.gelir : (k.ciro !== undefined ? k.ciro : (k.alınanÜcret !== undefined ? k.alınanÜcret : 0))) || 0;
+                let masrafTutari = parseFloat(k.masraflar !== undefined ? k.masraflar : (k.masraf !== undefined ? k.masraf : (k.maliyet !== undefined ? k.maliyet : (k.ürünMaliyeti !== undefined ? k.ürünMaliyeti : 0)))) || 0;
+
+                arsivCiroSum += ciroTutari;
+                arsivMasrafSum += masrafTutari;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${tamTarihSaat}</td>
+                        <td>${uzmanIsmi}</td>
+                        <td><strong>${urunIsmi}</strong></td>
+                        <td style="color:#00a8b5; font-weight:600;">₺${ciroTutari.toFixed(2)}</td>
+                        <td style="color:#ef4444; font-weight:600;">₺${masrafTutari.toFixed(2)}</td>
+                        <td style="text-align:center;"><span style="color:#10b981; font-size:0.85rem;"><i class="fas fa-cloud"></i> Bulutta Kayıtlı</span></td>
+                    </tr>
+                `;
+            });
+
+            let arsivKarSum = arsivCiroSum - arsivMasrafSum;
+            document.getElementById('arsivToplamCiroYazi').textContent = arsivCiroSum.toFixed(2);
+            document.getElementById('arsivToplamMasrafYazi').textContent = arsivMasrafSum.toFixed(2);
+            document.getElementById('arsivToplamKarYazi').textContent = arsivKarSum.toFixed(2);
+        }
+    </script>
+</body>
+</html>
