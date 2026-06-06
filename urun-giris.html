@@ -130,7 +130,6 @@
                                 <button type="button" class="btn-inline-cancel" onclick="kategoriEkleKutusunuKapat()">Kapat</button>
                                 <button type="button" class="btn-inline-save" id="btnKatKaydet" onclick="bulutaKategoriGonder()">Ekle</button>
                             </div>
-                            
                             <div class="category-list-manager">
                                 <div class="category-list-title">Mevcut Kategorileri Düzenle / Sil</div>
                                 <div id="miniCategoryListArea"></div>
@@ -216,7 +215,13 @@
         let localUrunHavuzu = [];
         let localKategoriHavuzu = {};
 
+        // GÜVENLİK KİLİDİ
         document.addEventListener("DOMContentLoaded", function() {
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return;
+            }
             kategorileriBuluttanCek().then(() => {
                 urunleriBuluttanCek();
             });
@@ -227,149 +232,84 @@
             const kutuAdedi = parseFloat(document.getElementById('kutuAdedi').value) || 0;
             const birimHacim = parseFloat(document.getElementById('birimHacim').value) || 0;
             const birimMaliyet = parseFloat(document.getElementById('birimMaliyet').value) || 0;
-            
-            // Yeni izole ID'lere hesaplamaları basıyoruz
             document.getElementById('toplamdakihacim').value = (kutuAdedi * birimHacim);
             document.getElementById('toplamdakimaliyet').value = (kutuAdedi * birimMaliyet);
+        }
+        // YENİ: ID ÜRETİM MOTORU
+        function generateNextId() {
+            let maxId = 0;
+            localUrunHavuzu.forEach(u => {
+                let idStr = (u.urunid || u.id || "0").toString();
+                // Sadece sayısal kısmı al (Örn: U-016 -> 16)
+                let num = parseInt(idStr.replace(/\D/g, '')); 
+                if (!isNaN(num) && num > maxId) maxId = num;
+            });
+            // Sayıyı 3 haneli formatta (U-001 gibi) geri döndür
+            return "U-" + String(maxId + 1).padStart(3, '0');
         }
 
         function kategorileriBuluttanCek(secilecekKategori = "") {
             return new Promise((resolve) => {
                 const select = document.getElementById('urunKategori');
                 const miniListArea = document.getElementById('miniCategoryListArea');
-                
                 select.innerHTML = '<option value="">Yükleniyor...</option>';
                 miniListArea.innerHTML = '<div style="font-size:0.8rem; color:#64748b; padding:5px;">Yükleniyor...</div>';
-                
                 const cbName = "getKategoriler_cb_" + Math.floor(Math.random() * 1000000);
-                
                 window[cbName] = function(kategoriler) {
                     select.innerHTML = '<option value="">Kategori Seçiniz...</option>';
                     miniListArea.innerHTML = '';
                     localKategoriHavuzu = {};
-
                     if (kategoriler && kategoriler.length > 0) {
                         kategoriler.forEach(k => {
                             const kAd = (k.kategoriAdi || k.katergoriAdi || k.kategori || "").trim();
                             const kId = (k.kategoriid || k.id || kAd).trim(); 
-                            
                             if(kAd) {
                                 localKategoriHavuzu[kId] = kAd;
-                                
-                                const opt = document.createElement('option');
-                                opt.value = kAd; 
-                                opt.textContent = kAd;
-                                select.appendChild(opt);
-
+                                const opt = document.createElement('option'); opt.value = kAd; opt.textContent = kAd; select.appendChild(opt);
                                 const row = document.createElement('div');
                                 row.className = 'category-item-row';
-                                row.innerHTML = `
-                                    <span>${kAd}</span>
-                                    <div class="category-item-actions">
-                                        <button type="button" class="btn-cat-mini edit" onclick="kategoriDuzenleModu('${kAd}')" title="Adını Değiştir"><i class="fa-solid fa-pen"></i></button>
-                                        <button type="button" class="btn-cat-mini delete" onclick="kategoriSilTetikle('${kId}', '${kAd}')" title="Kategoriyi Sil"><i class="fa-solid fa-trash-can"></i></button>
-                                    </div>
-                                `;
+                                row.innerHTML = `<span>${kAd}</span><div class="category-item-actions"><button type="button" class="btn-cat-mini edit" onclick="kategoriDuzenleModu('${kAd}')"><i class="fa-solid fa-pen"></i></button><button type="button" class="btn-cat-mini delete" onclick="kategoriSilTetikle('${kId}', '${kAd}')"><i class="fa-solid fa-trash-can"></i></button></div>`;
                                 miniListArea.appendChild(row);
                             }
                         });
-                    } else {
-                        miniListArea.innerHTML = '<div style="font-size:0.8rem; color:#64748b; padding:5px;">Kategori bulunamadı.</div>';
-                    }
-                    
-                    if (secilecekKategori) {
-                        select.value = secilecekKategori.trim();
-                    }
-                    
+                    } else { miniListArea.innerHTML = '<div style="font-size:0.8rem; color:#64748b; padding:5px;">Kategori bulunamadı.</div>'; }
+                    if (secilecekKategori) select.value = secilecekKategori.trim();
                     if(document.getElementById(cbName)) document.getElementById(cbName).remove();
                     resolve(true);
                 };
-
-                let s = document.createElement('script');
-                s.id = cbName;
+                let s = document.createElement('script'); s.id = cbName;
                 s.src = `${SHEET_WEB_APP_URL}?action=getkategoriler&callback=${cbName}&_b=${new Date().getTime()}`;
                 document.body.appendChild(s);
             });
         }
 
-        function kategoriEkleKutusunuAc() { 
-            kategoriEditorTemizle();
-            document.getElementById('newCategoryBox').style.display = 'flex'; 
-            document.getElementById('newCategoryName').focus(); 
-        }
-        
-        function kategoriEkleKutusunuKapat() { 
-            document.getElementById('newCategoryBox').style.display = 'none'; 
-            kategoriEditorTemizle();
-        }
-
-        function kategoriEditorTemizle() {
-            document.getElementById('editKategoriEskiAdi').value = '';
-            document.getElementById('newCategoryName').value = '';
-            document.getElementById('katKutuBaslik').textContent = "Yeni Kategori Ekle";
-            document.getElementById('katKutuBaslik').style.color = "#10b981";
-            document.getElementById('btnKatKaydet').textContent = "Ekle";
-            document.getElementById('btnKatKaydet').style.backgroundColor = "#10b981";
-        }
-
-        function kategoriDuzenleModu(eskiAd) {
-            document.getElementById('editKategoriEskiAdi').value = eskiAd;
-            document.getElementById('newCategoryName').value = eskiAd;
-            document.getElementById('katKutuBaslik').textContent = "Kategori Adını Düzenle";
-            document.getElementById('katKutuBaslik').style.color = "#b45309";
-            document.getElementById('btnKatKaydet').textContent = "Güncelle";
-            document.getElementById('btnKatKaydet').style.backgroundColor = "#b45309";
-            document.getElementById('newCategoryName').focus();
-        }
+        function kategoriEkleKutusunuAc() { kategoriEditorTemizle(); document.getElementById('newCategoryBox').style.display = 'flex'; document.getElementById('newCategoryName').focus(); }
+        function kategoriEkleKutusunuKapat() { document.getElementById('newCategoryBox').style.display = 'none'; kategoriEditorTemizle(); }
+        function kategoriEditorTemizle() { document.getElementById('editKategoriEskiAdi').value = ''; document.getElementById('newCategoryName').value = ''; document.getElementById('katKutuBaslik').textContent = "Yeni Kategori Ekle"; document.getElementById('katKutuBaslik').style.color = "#10b981"; document.getElementById('btnKatKaydet').textContent = "Ekle"; document.getElementById('btnKatKaydet').style.backgroundColor = "#10b981"; }
+        function kategoriDuzenleModu(eskiAd) { document.getElementById('editKategoriEskiAdi').value = eskiAd; document.getElementById('newCategoryName').value = eskiAd; document.getElementById('katKutuBaslik').textContent = "Kategori Adını Düzenle"; document.getElementById('katKutuBaslik').style.color = "#b45309"; document.getElementById('btnKatKaydet').textContent = "Güncelle"; document.getElementById('btnKatKaydet').style.backgroundColor = "#b45309"; document.getElementById('newCategoryName').focus(); }
 
         function bulutaKategoriGonder() {
             const yeniKatAdi = document.getElementById('newCategoryName').value.trim();
             const eskiKatAdi = document.getElementById('editKategoriEskiAdi').value.trim();
-            
             if(!yeniKatAdi) return;
-
             const cbName = "saveKat_cb_" + Math.floor(Math.random() * 1000000);
             window[cbName] = function(sonuc) {
-                if(sonuc && sonuc.status === "success") {
-                    kategoriEditorTemizle();
-                    kategorileriBuluttanCek(yeniKatAdi).then(() => {
-                        urunleriBuluttanCek();
-                    });
-                } else { 
-                    alert("Hata: " + (sonuc.message || "Kategori işlemi başarısız.")); 
-                }
+                if(sonuc && sonuc.status === "success") { kategoriEditorTemizle(); kategorileriBuluttanCek(yeniKatAdi).then(() => { urunleriBuluttanCek(); }); } else { alert("Hata: " + (sonuc.message || "Kategori işlemi başarısız.")); }
                 if(document.getElementById(cbName)) document.getElementById(cbName).remove();
             };
-
-            let s = document.createElement('script');
-            s.id = cbName;
-            
-            if(eskiKatAdi) {
-                s.src = `${SHEET_WEB_APP_URL}?action=editkategori&eskiKategoriAdi=${encodeURIComponent(eskiKatAdi)}&yeniKategoriAdi=${encodeURIComponent(yeniKatAdi)}&callback=${cbName}`;
-            } else {
-                s.src = `${SHEET_WEB_APP_URL}?action=addkategori&kategoriAdi=${encodeURIComponent(yeniKatAdi)}&callback=${cbName}`;
-            }
+            let s = document.createElement('script'); s.id = cbName;
+            s.src = eskiKatAdi ? `${SHEET_WEB_APP_URL}?action=editkategori&eskiKategoriAdi=${encodeURIComponent(eskiKatAdi)}&yeniKategoriAdi=${encodeURIComponent(yeniKatAdi)}&callback=${cbName}` : `${SHEET_WEB_APP_URL}?action=addkategori&kategoriAdi=${encodeURIComponent(yeniKatAdi)}&callback=${cbName}`;
             document.body.appendChild(s);
         }
 
         function kategoriSilTetikle(katId, katAdi) {
             if(!confirm(`"${katAdi}" kategorisini silmek istediğinize emin misiniz?`)) return;
-            
             const cbName = "silKat_cb_" + Math.floor(Math.random() * 1000000);
             window[cbName] = function(sonuc) {
-                if(sonuc && sonuc.status === "success") {
-                    kategoriEditorTemizle();
-                    kategorileriBuluttanCek().then(() => {
-                        urunleriBuluttanCek();
-                    });
-                } else {
-                    alert("Hata: " + (sonuc.message || "Kategori silinemedi."));
-                }
+                if(sonuc && sonuc.status === "success") { kategoriEditorTemizle(); kategorileriBuluttanCek().then(() => { urunleriBuluttanCek(); }); } else { alert("Hata: " + (sonuc.message || "Kategori silinemedi.")); }
                 if(document.getElementById(cbName)) document.getElementById(cbName).remove();
             };
-            
-            let s = document.createElement('script');
-            s.id = cbName;
+            let s = document.createElement('script'); s.id = cbName;
             s.src = `${SHEET_WEB_APP_URL}?action=silkategori&id=${encodeURIComponent(katId)}&callback=${cbName}`;
             document.body.appendChild(s);
         }
@@ -378,55 +318,22 @@
             const tbody = document.getElementById('urunTableBody');
             const table = document.getElementById('urunAnaTablo');
             const loader = document.getElementById('loadingMessage');
-
             loader.style.display = "block";
             table.style.display = "none";
             tbody.innerHTML = "";
-
             const cbName = "getstok_cb_" + Math.floor(Math.random() * 1000000);
             window[cbName] = function(stokVerileri) {
-                
-                if (stokVerileri && Array.isArray(stokVerileri)) {
-                    localUrunHavuzu = stokVerileri.filter(u => {
-                        const idKontrol = u.urunid || u.id || '';
-                        return idKontrol.toString().trim() !== "";
-                    });
-                } else {
-                    localUrunHavuzu = [];
-                }
-
-                if (localUrunHavuzu.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#64748b;">Depoda ürün kaydı bulunmuyor.</td></tr>`;
-                } else {
+                localUrunHavuzu = (stokVerileri && Array.isArray(stokVerileri)) ? stokVerileri.filter(u => (u.urunid || u.id || '').toString().trim() !== "") : [];
+                if (localUrunHavuzu.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#64748b;">Depoda ürün kaydı bulunmuyor.</td></tr>`; } else {
                     localUrunHavuzu.forEach(u => {
                         const tr = document.createElement('tr');
                         const idStr = u.urunid || u.id || '';
                         const adStr = u.urunadi || u.urunAdi || '';
-                        
-                        const gelenKat = String(u.kategori || '').trim();
-                        const katStr = localKategoriHavuzu[gelenKat] || gelenKat || 'Genel';
-                        
-                        // Excel başlığı ne olursa olsun (harf duyarlılığı uyumlu taranıyor)
+                        const katStr = localKategoriHavuzu[u.kategori] || u.kategori || 'Genel';
                         const dunyaHacim = parseFloat(u.toplamHacim || u.toplamhacim || 0);
                         const kalanHacim = parseFloat(u.kalanHacim || u.kalanhacim || dunyaHacim);
                         const dunyaMaliyet = parseFloat(u.toplamMaliyet || u.toplammaliyet || 0);
-                        const birimStr = u.birim || 'ml';
-
-                        tr.innerHTML = `
-                            <td>
-                                <div class="p-title">${adStr}</div>
-                                <div class="p-subtitle">ID: <strong>${idStr}</strong></div>
-                            </td>
-                            <td><span class="cat-badge">${katStr}</span></td>
-                            <td><span class="hacim-text">${kalanHacim} / ${dunyaHacim} ${birimStr}</span></td>
-                            <td><span class="maliyet-text">${dunyaMaliyet.toLocaleString('tr-TR', {minimumFractionDigits: 2})} ₺</span></td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="btn-table-action btn-table-edit" onclick="duzenleModunaAl('${idStr}')" title="Değiştir/Düzenle"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button class="btn-table-action btn-table-delete" onclick="urunSilTetikle('${idStr}')" title="Sil"><i class="fa-solid fa-trash-can"></i></button>
-                                </div>
-                            </td>
-                        `;
+                        tr.innerHTML = `<td><div class="p-title">${adStr}</div><div class="p-subtitle">ID: <strong>${idStr}</strong></div></td><td><span class="cat-badge">${katStr}</span></td><td><span class="hacim-text">${kalanHacim} / ${dunyaHacim} ${u.birim || 'ml'}</span></td><td><span class="maliyet-text">${dunyaMaliyet.toLocaleString('tr-TR', {minimumFractionDigits: 2})} ₺</span></td><td><div class="action-btns"><button class="btn-table-action btn-table-edit" onclick="duzenleModunaAl('${idStr}')" title="Düzenle"><i class="fa-solid fa-pen-to-square"></i></button><button class="btn-table-action btn-table-delete" onclick="urunSilTetikle('${idStr}')" title="Sil"><i class="fa-solid fa-trash-can"></i></button></div></td>`;
                         tbody.appendChild(tr);
                     });
                 }
@@ -434,9 +341,7 @@
                 table.style.display = "table";
                 if(document.getElementById(cbName)) document.getElementById(cbName).remove();
             };
-
-            let s = document.createElement('script');
-            s.id = cbName;
+            let s = document.createElement('script'); s.id = cbName;
             s.src = `${SHEET_WEB_APP_URL}?action=getstok&callback=${cbName}&_b=${new Date().getTime()}`;
             document.body.appendChild(s);
         }
@@ -445,11 +350,10 @@
             const id = document.getElementById('editUrunId').value;
             const urunAdi = document.getElementById('urunAdi').value.trim();
             const kategori = document.getElementById('urunKategori').value;
-            
-            // Izole input elementlerinden verileri topluyoruz
-            const gonderHacim = document.getElementById('toplamdakihacim').value;
+            // NaN koruması
+            const gonderHacim = parseFloat(document.getElementById('toplamdakihacim').value) || 0;
+            const gonderMaliyet = parseFloat(document.getElementById('toplamdakimaliyet').value) || 0;
             const birim = document.getElementById('birim').value;
-            const gonderMaliyet = document.getElementById('toplamdakimaliyet').value; 
             const btn = document.getElementById('btnSubmit');
 
             btn.disabled = true;
@@ -459,71 +363,43 @@
             window[cbName] = function(sonuc) {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Veriyi Depo Hafızasına İşle...`;
-                if(sonuc && sonuc.status === "success") {
-                    urunFormTemizle();
-                    urunleriBuluttanCek();
-                } else { alert("Hata: " + (sonuc ? sonuc.message : "Bilinmeyen hata")); }
+                if(sonuc && sonuc.status === "success") { urunFormTemizle(); urunleriBuluttanCek(); } 
+                else { alert("Hata: " + (sonuc ? sonuc.message : "Bilinmeyen hata")); }
                 if(document.getElementById(cbName)) document.getElementById(cbName).remove();
             };
 
-            let s = document.createElement('script');
-            s.id = cbName;
-            
-            // Apps Script motorunun beklediği parametre adlarına bağlama yapıyoruz
-            s.src = `${SHEET_WEB_APP_URL}?action=kaydeturun` +
-                    `&id=${encodeURIComponent(id)}` +
-                    `&urunAdi=${encodeURIComponent(urunAdi)}` +
-                    `&kategori=${encodeURIComponent(kategori)}` +
-                    `&toplamHacim=${encodeURIComponent(gonderHacim)}` +
-                    `&kalanHacim=${encodeURIComponent(gonderHacim)}` + 
-                    `&birim=${encodeURIComponent(birim)}` +
-                    `&toplamMaliyet=${encodeURIComponent(gonderMaliyet)}` + 
-                    `&callback=${cbName}`;
-                    
+            let s = document.createElement('script'); s.id = cbName;
+            s.src = `${SHEET_WEB_APP_URL}?action=kaydeturun&id=${encodeURIComponent(id)}&urunAdi=${encodeURIComponent(urunAdi)}&kategori=${encodeURIComponent(kategori)}&toplamHacim=${gonderHacim}&kalanHacim=${gonderHacim}&birim=${encodeURIComponent(birim)}&toplamMaliyet=${gonderMaliyet}&callback=${cbName}`;
             document.body.appendChild(s);
         }
 
-        async function duzenleModunaAl(id) {
+        function duzenleModunaAl(id) {
             const u = localUrunHavuzu.find(item => String(item.urunid || item.id).trim() === String(id).trim());
             if(!u) return;
-
-            await kategorileriBuluttanCek();
-
-            document.getElementById('editUrunId').value = u.urunid || u.id || '';
-            document.getElementById('urunAdi').value = u.urunadi || u.urunAdi || '';
-            
-            const gelenKat = String(u.kategori || '').trim();
-            const katDegeri = localKategoriHavuzu[gelenKat] || gelenKat;
-            document.getElementById('urunKategori').value = katDegeri.trim();
-            
-            document.getElementById('kutuAdedi').value = 1;
-            
-            // Çekilen veriyi izole kutularımıza güvenli bir şekilde aktarıyoruz
-            const dunyaHacim = u.toplamHacim || u.toplamhacim || 0;
-            document.getElementById('birimHacim').value = dunyaHacim;
-            document.getElementById('toplamdakihacim').value = dunyaHacim;
-            
-            const dunyaMaliyet = u.toplamMaliyet || u.toplammaliyet || 0;
-            document.getElementById('birimMaliyet').value = dunyaMaliyet;
-            document.getElementById('toplamdakimaliyet').value = dunyaMaliyet;
-            
-            document.getElementById('birim').value = u.birim || 'ml';
-            
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Ürün Kartını Değiştir`;
-            document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-rotate"></i> Değişiklikleri Kaydet`;
-            document.getElementById('btnCancel').style.display = 'inline-block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            kategorileriBuluttanCek(u.kategori).then(() => {
+                document.getElementById('editUrunId').value = u.urunid || u.id || '';
+                document.getElementById('urunAdi').value = u.urunadi || u.urunAdi || '';
+                document.getElementById('kutuAdedi').value = 1;
+                document.getElementById('birimHacim').value = u.toplamHacim || u.toplamhacim || 0;
+                document.getElementById('toplamdakihacim').value = u.toplamHacim || u.toplamhacim || 0;
+                document.getElementById('birimMaliyet').value = u.toplamMaliyet || u.toplammaliyet || 0;
+                document.getElementById('toplamdakimaliyet').value = u.toplamMaliyet || u.toplammaliyet || 0;
+                document.getElementById('birim').value = u.birim || 'ml';
+                document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Ürün Kartını Değiştir`;
+                document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-rotate"></i> Değişiklikleri Kaydet`;
+                document.getElementById('btnCancel').style.display = 'inline-block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         }
 
         function urunSilTetikle(id) {
             if(!confirm("Kayıt kalıcı olarak silinecektir, emin misiniz?")) return;
             const cbName = "sil_cb_" + Math.floor(Math.random() * 1000000);
             window[cbName] = function(sonuc) {
-                if(sonuc.status === "success") { urunFormTemizle(); urunleriBuluttanCek(); }
+                if(sonuc && sonuc.status === "success") { urunFormTemizle(); urunleriBuluttanCek(); }
                 if(document.getElementById(cbName)) document.getElementById(cbName).remove();
             };
-            let s = document.createElement('script');
-            s.id = cbName;
+            let s = document.createElement('script'); s.id = cbName;
             s.src = `${SHEET_WEB_APP_URL}?action=silurun&id=${id}&callback=${cbName}`;
             document.body.appendChild(s);
         }
