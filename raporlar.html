@@ -3,48 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahar Beauty Studio - Çalışan & Hizmet Raporlama Paneli</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Bahar Beauty Studio - Çalışan & Hizmet Raporlama</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #f0f4f8; padding: 30px 20px; font-family: 'Playfair Display', serif; }
-        .wrapper { max-width: 1200px; margin: 0 auto; width: 100%; }
+        body { 
+            background-color: #fff9f9; 
+            padding: 25px 20px; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            min-height: 100vh; 
+            color: #1e293b; 
+        }
         
-        /* 💎 KURUMSAL ÜST BAR STİLLERİ */
-        .global-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background-color: white; padding: 15px 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 6px solid #00a8b5; width: 100%; }
-        .global-header-title-area { display: flex; flex-direction: column; }
-        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #00a8b5; line-height: 1.1; margin-bottom: 2px; }
-        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
-        .global-btn-back { font-family: 'Segoe UI', sans-serif; background-color: #e0f7fa; color: #00a8b5; border: 1px solid #b2ebf2; padding: 10px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; transition: all 0.25s; font-size: 0.9rem; }
-        .global-btn-back:hover { background-color: #00a8b5; color: white; transform: translateX(-3px); box-shadow: 0 4px 10px rgba(0, 168, 181, 0.15); }
+        .wrapper { max-width: 1250px; margin: 0 auto; width: 100%; }
+        
+        /* HEADER - TURKUAZ TEMA */
+        .global-page-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; background-color: white; padding: 15px 30px; 
+            border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+            border-left: 6px solid #00a8b5; 
+        }
+        .global-header-title-area { display: flex; flex-direction: column; text-align: left; }
+        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #00a8b5; line-height: 1.1; margin-bottom: 2px; }
+        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
+        .global-btn-back { background-color: #e0f7fa; color: #00a8b5; border: 1px solid #b2ebf2; padding: 8px 18px; border-radius: 10px; font-weight: 700; text-decoration: none; transition: all 0.25s; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif;}
+        .global-btn-back:hover { background-color: #00a8b5; color: white; transform: translateY(-1px); }
 
-        /* KARTLAR VE FİLTRE DÜZENİ */
-        .card { background-color: white; border-radius: 14px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 25px; }
-        .card-title { font-size: 1.2rem; color: #1e293b; margin-bottom: 15px; font-weight: 700; border-bottom: 2px dashed #e2e8f0; padding-bottom: 8px; }
-        
-        .filter-row { display: flex; gap: 20px; flex-wrap: wrap; font-family: 'Segoe UI', sans-serif; }
-        .filter-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 250px; }
-        .filter-group label { font-size: 0.85rem; font-weight: 600; color: #475569; }
-        .filter-group select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; background: #f8fafc; color: #334155; cursor: pointer; }
+        /* KART VE FİLTRE ALANI */
+        .filter-card {
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); margin-bottom: 20px; position: relative;
+        }
 
-        /* GRAFİK İKİLİSİ */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 25px; }
-        .chart-box-flex { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; gap: 15px; }
+        select, input[type="date"] { 
+            width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; 
+            border-radius: 10px; font-size: 0.85rem; outline: none; background: #f8fafc;
+            transition: all 0.2s; font-weight: 600; color: #334155; cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif; height: 42px;
+        }
+        select:focus, input[type="date"]:focus { border-color: #00a8b5; background: white; box-shadow: 0 0 0 3px rgba(0, 168, 181, 0.15); }
         
-        .chart-wrapper { position: relative; height: 260px; width: 260px; }
-        .chart-legend-area { flex: 1; display: flex; flex-direction: column; gap: 10px; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; max-height: 260px; overflow-y: auto; padding-right: 5px; }
+        .btn-getir {
+            background-color: #00a8b5; color: white; border: none; border-radius: 10px;
+            font-size: 0.9rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer; transition: all 0.2s; height: 42px; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 168, 181, 0.25);
+        }
+        .btn-getir:hover { background-color: #008c96; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 168, 181, 0.35); }
+
+        /* ÖZET İSTATİSTİK KARTLARI */
+        .stat-card {
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02); transition: transform 0.2s ease;
+            text-align: center;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05); }
+        .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 12px; }
         
-        /* Renk Göstergeleri */
-        .legend-item { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #f1f5f9; }
+        .theme-teal .stat-icon { background: #ccfbf1; color: #0d9488; }
+        .theme-rose .stat-icon { background: #ffe4e6; color: #e11d48; }
+        .theme-emerald .stat-icon { background: #d1fae5; color: #059669; }
+
+        .stat-label { font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .stat-val { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; color: #0f172a; }
+
+        .theme-teal .stat-val { color: #0f766e; }
+        .theme-rose .stat-val { color: #be123c; }
+        .theme-emerald .stat-val { color: #047857; }
+
+        /* GRAFİK BÖLÜMÜ */
+        .chart-section-title {
+            font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #0f172a; 
+            margin: 30px 0 15px 0; font-weight: 800; border-bottom: 3px solid #ffe4e6; 
+            padding-bottom: 8px; display: inline-block;
+        }
+        .chart-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 20px; }
+        @media (min-width: 768px) { .chart-grid { grid-template-columns: repeat(3, 1fr); } }
+        
+        .chart-box { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
+        .canvas-container { position: relative; height: 240px; width: 100%; margin-bottom: 15px;}
+        
+        /* ÖZEL EFSANE (LEGEND) TASARIMI */
+        .custom-legend { display: flex; flex-direction: column; gap: 8px; max-height: 140px; overflow-y: auto; padding-right: 5px; }
+        .custom-legend::-webkit-scrollbar { width: 4px; }
+        .custom-legend::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #334155; padding: 6px 10px; background: #fffbfa; border-radius: 6px; border: 1px solid #ffe4e6; }
         .legend-color { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+        .legend-text { flex-grow: 1; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .legend-val { font-weight: 800; color: #0f172a; }
 
-        /* Yükleniyor Durumu */
-        .loading-status { font-family: 'Segoe UI', sans-serif; text-align: center; color: #00a8b5; font-weight: 600; padding: 10px; display: none; }
-        .no-data-msg { font-family: 'Segoe UI', sans-serif; text-align: center; color: #94a3b8; font-size: 0.95rem; padding: 40px 10px; width: 100%; }
+        /* YÜKLEYİCİ & BOŞ EKRAN */
+        .loader-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; border-radius: 14px;
+        }
+        .spinner { border: 4px solid #f1f5f9; border-top: 4px solid #00a8b5; border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .no-data-msg { text-align: center; padding: 40px 20px; color: #64748b; font-weight: 600; font-size: 0.9rem; border: 2px dashed #cbd5e1; border-radius: 12px; background: #f8fafc; margin-top: 10px;}
     </style>
 </head>
 <body>
@@ -53,366 +119,448 @@
         <div class="global-page-header">
             <div class="global-header-title-area">
                 <span class="global-header-brand">Bahar Beauty Studio</span>
-                <span class="global-header-sub">| Uzman Performans & Hizmet Dağılım Analizleri</span>
+                <span class="global-header-sub">✨ Çalışan & Hizmet Raporlama Paneli</span>
             </div>
-            <a href="dashboard.html" class="global-btn-back"><i class="fa-solid fa-house"></i> Ana Yönetim Paneli</a>
+            <a href="dashboard.html" class="global-btn-back"><i class="fas fa-home"></i> Ana Yönetim Paneli</a>
         </div>
 
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-filter" style="color: #00a8b5;"></i> Analiz Kriterlerini Seçin (Stok Tabanlı)</div>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>Hizmet Kategorisi (Depodan Çekilen)</label>
-                    <select id="categorySelect" onchange="kategoriDegisti()">
-                        <option value="HEPSİ">-- Tüm Kategoriler --</option>
+        <div class="filter-card">
+            <div id="chartLoader" class="loader-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <p class="mt-3 font-bold text-slate-500 text-sm">Sistem Hazırlanıyor...</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <label class="block text-[0.7rem] font-bold text-slate-500 mb-1.5"><i class="fas fa-layer-group text-teal-500 mr-1"></i> Hizmet veya Stok Kategorisi Seçiniz</label>
+                    <select id="filterKategori">
+                        <option value="ALL">-- Kategoriden Bağımsız (Tüm Veriler) --</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label>Uygulanan Ürün / İşlem (Depodan Çekilen)</label>
-                    <select id="productSelect" onchange="analizEtVeGrafikleriGuncelle()">
-                        <option value="HEPSİ">-- Tüm Ürünler / İşlemler --</option>
-                    </select>
+                <div>
+                    <label class="block text-[0.7rem] font-bold text-slate-500 mb-1.5"><i class="far fa-calendar-alt text-indigo-400 mr-1"></i> Başlangıç Tarihi</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div>
+                    <label class="block text-[0.7rem] font-bold text-slate-500 mb-1.5"><i class="far fa-calendar-check text-indigo-400 mr-1"></i> Bitiş Tarihi</label>
+                    <input type="date" id="endDate">
                 </div>
             </div>
-            <div id="loadingMessage" class="loading-status">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Personeller, Stok Hafızası ve Seans Geçmişi senkronize ediliyor...
+            <div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">
+                <button class="btn-getir md:w-auto px-8" onclick="verileriIsle()">
+                    <i class="fas fa-chart-pie"></i> Raporu Getir
+                </button>
             </div>
         </div>
 
-        <div class="charts-grid">
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-chart-pie" style="color: #00a8b5;"></i> Uzmanlara Göre İşlem Adedi Dağılımı</div>
-                <div class="chart-box-flex" id="cntCountArea">
-                    <div class="chart-wrapper">
-                        <canvas id="countPieChart"></canvas>
-                    </div>
-                    <div class="chart-legend-area" id="legendBoxCount"></div>
-                </div>
-            </div>
+        <div id="emptyStateArea" class="no-data-msg">
+            <i class="fas fa-search-chart" style="font-size: 32px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+            Yukarıdan kategori ve tarih seçimi yaparak "Raporu Getir" butonuna tıklayınız.
+        </div>
 
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-pie-chart" style="color: #10b981;"></i> Uzmanlara Göre Ciro Payı Dağılımı</div>
-                <div class="chart-box-flex" id="cntRevenueArea">
-                    <div class="chart-wrapper">
-                        <canvas id="revenuePieChart"></canvas>
-                    </div>
-                    <div class="chart-legend-area" id="legendBoxRevenue"></div>
+        <div id="summaryCards" class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-2" style="display: none;">
+            <div class="stat-card theme-teal">
+                <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-label">Toplam Üretilen Ciro</div>
+                <div class="stat-val" id="valTotalRevenue">₺0.00</div>
+            </div>
+            <div class="stat-card theme-rose">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-label">Kullanılan Stok Maliyeti</div>
+                <div class="stat-val" id="valTotalCost">₺0.00</div>
+            </div>
+            <div class="stat-card theme-emerald">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-label">Net Analiz Karı</div>
+                <div class="stat-val" id="valNetProfit">₺0.00</div>
+            </div>
+        </div>
+
+        <div id="cntCountArea" style="display:none; margin-bottom: 40px;">
+            <div class="chart-section-title"><i class="fas fa-chart-bar text-rose-400 mr-2"></i> İşlem Hacmi Dağılımları (Adet)</div>
+            <div class="chart-grid">
+                <div class="chart-box">
+                    <div class="canvas-container"><canvas id="chartCountKategori"></canvas></div>
+                    <div id="legendCountKategori" class="custom-legend"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="canvas-container"><canvas id="chartCountUzman"></canvas></div>
+                    <div id="legendCountUzman" class="custom-legend"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="canvas-container"><canvas id="chartCountDetay"></canvas></div>
+                    <div id="legendCountDetay" class="custom-legend"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
-        
-        let globalSeansData = [];
-        let globalStokData = [];
-        let validUzmanNames = []; // Sadece salonKullanicilari tablosunda rolü "Uzman" olanlar
-        
-        let myCountChart = null;
-        let myRevenueChart = null;
+        // KENDİ GOOGLE APPS SCRIPT URL'NİZİ BURAYA YAPIŞTIRIN
+        const API_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
 
-        const renkPaleti = [
-            '#00a8b5', '#10b981', '#6366f1', '#f59e0b', '#ec4899', 
-            '#8b5cf6', '#14b8a6', '#f43f5e', '#06b6d4', '#a855f7'
+        let rawPaketler = []; 
+        let rawSeanslar = []; 
+        let rawHizmetler = []; 
+        let rawKategoriler = []; 
+        let chartInstances = {}; 
+
+        // 🌟 SICAK VE TATLI RENK PALETİ
+        const sweetWarmColors = [
+            '#FF6B6B', '#FF8E7F', '#FFB28B', '#F472B6', '#FBBF24', 
+            '#FFD099', '#F9A8D4', '#FB7185', '#FBB6CE', '#F87171'
         ];
 
-        document.addEventListener("DOMContentLoaded", function() {
-            verileriBuluttanYukle();
+        document.addEventListener("DOMContentLoaded", () => {
+            // --- 1. VIP GÜVENLİK KONTROLÜ ---
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // 2. Rol kontrolü: Sadece Admin ve Müdür girebilir
+            let rol = String(aktifKullanici.rol).toLowerCase().trim();
+            if (!rol.includes("admin") && !rol.includes("müdür")) {
+                alert("Yetkisiz Erişim: Bu raporları görüntüleme yetkiniz bulunmamaktadır!");
+                window.location.href = "dashboard.html"; 
+                return; 
+            }
+
+            fetchBulutData();
         });
 
-        // 🔄 3 Farklı Bulut Kaynağını (Kullanıcılar, Stok, Seanslar) JSONP ile paralel olarak çekme
-        function verileriBuluttanYukle() {
-            const loader = document.getElementById('loadingMessage');
-            loader.style.display = "block";
-
-            let seansYuklendi = false;
-            let stokYuklendi = false;
-            let kullaniciYuklendi = false;
-
-            function kontrolEtVeBaslat() {
-                if(seansYuklendi && stokYuklendi && kullaniciYuklendi) {
-                    loader.style.display = "none";
-                    filtreSecenekleriniDoldur();
-                    analizEtVeGrafikleriGuncelle();
-                }
-            }
-
-            // 1. Sg: salonKullanicilari tablosundan sadece "Uzman" olanları filtrele
-            const cbUserName = "cb_rapor_user_" + Math.floor(Math.random() * 1000000);
-            window[cbUserName] = function(data) {
-                if(data && Array.isArray(data)) {
-                    data.forEach(u => {
-                        let rol = (u.rol || u.Rol || "").toString().trim().toLowerCase();
-                        let adSoyad = (u.adSoyad || u.adsoyad || u.AdSoyad || "").toString().trim();
-                        // Sadece "Uzman" rolündekileri kabul et (Admin ve Müdür otomatik dışarıda kalır)
-                        if(rol === "uzman" && adSoyad !== "") {
-                            if(!validUzmanNames.includes(adSoyad)) {
-                                validUzmanNames.push(adSoyad);
-                            }
-                        }
-                    });
-                }
-                kullaniciYuklendi = true;
-                if(document.getElementById(cbUserName)) document.getElementById(cbUserName).remove();
-                kontrolEtVeBaslat();
-            };
-            let s0 = document.createElement('script');
-            s0.id = cbUserName;
-            s0.src = `${SHEET_WEB_APP_URL}?action=getkullanicilar&callback=${cbUserName}&_t=${Date.now()}`;
-            document.body.appendChild(s0);
-
-            // 2. Seans Geçmişi Verisini Çek
-            const cbSeansName = "cb_rapor_seans_" + Math.floor(Math.random() * 1000000);
-            window[cbSeansName] = function(data) {
-                if(data && Array.isArray(data)) {
-                    globalSeansData = data;
-                }
-                seansYuklendi = true;
-                if(document.getElementById(cbSeansName)) document.getElementById(cbSeansName).remove();
-                kontrolEtVeBaslat();
-            };
-            let s1 = document.createElement('script');
-            s1.id = cbSeansName;
-            s1.src = `${SHEET_WEB_APP_URL}?action=getseanslar&callback=${cbSeansName}&_t=${Date.now()}`;
-            document.body.appendChild(s1);
-
-            // 3. Stok / Depo Hafızasını Çek (Filtre Ağacı İçin)
-            const cbStokName = "cb_rapor_stok_" + Math.floor(Math.random() * 1000000);
-            window[cbStokName] = function(data) {
-                if(data && Array.isArray(data)) {
-                    globalStokData = data.filter(item => item.kategori || item.Kategori);
-                }
-                stokYuklendi = true;
-                if(document.getElementById(cbStokName)) document.getElementById(cbStokName).remove();
-                kontrolEtVeBaslat();
-            };
-            let s2 = document.createElement('script');
-            s2.id = cbStokName;
-            s2.src = `${SHEET_WEB_APP_URL}?action=getstok&callback=${cbStokName}&_t=${Date.now()}`;
-            document.body.appendChild(s2);
+        function getSafeArray(val) {
+            if (!val) return [];
+            if (Array.isArray(val)) return val;
+            if (val.data && Array.isArray(val.data)) return val.data;
+            return [];
         }
 
-        function filtreSecenekleriniDoldur() {
-            const catSelect = document.getElementById("categorySelect");
-            catSelect.innerHTML = '<option value="HEPSİ">-- Tüm Kategoriler --</option>';
+        function safeFloat(val) {
+            if (!val) return 0;
+            let cleanVal = String(val).replace(/\s/g, '').replace(',', '.');
+            let parsed = parseFloat(cleanVal);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function jsonpFetch(action, callbackBaseName) {
+            return new Promise((resolve) => {
+                const uniqueHash = Math.random().toString(36).substring(2, 10);
+                const callbackName = callbackBaseName + "_" + uniqueHash;
+                const scriptId = "jsonp_script_" + uniqueHash;
+
+                window[callbackName] = function(response) {
+                    resolve(getSafeArray(response));
+                    const s = document.getElementById(scriptId);
+                    if(s) s.remove();
+                    delete window[callbackName];
+                };
+
+                const script = document.createElement('script');
+                script.id = scriptId;
+                script.src = `${API_URL}?action=${action}&callback=${callbackName}&_=${new Date().getTime()}`;
+                script.onerror = () => { resolve([]); };
+                document.body.appendChild(script);
+            });
+        }
+
+        async function fetchBulutData() {
+            document.getElementById('chartLoader').style.display = 'flex';
             
-            let kategoriler = [];
-            globalStokData.forEach(item => {
-                let kat = item.kategori || item.Kategori;
-                if(kat && !kategoriler.includes(kat.trim())) {
-                    kategoriler.push(kat.trim());
+            // DÜZELTME: Hem paket, hem seans, hem kütüphane, hem de kategorileri aynı anda çek
+            const [paketRes, seansRes, hizmetRes, katRes] = await Promise.all([
+                jsonpFetch("getpaketler", "cb_paket"),
+                jsonpFetch("getseanslar", "cb_seans"),
+                jsonpFetch("gethizmetler", "cb_hizm"),
+                jsonpFetch("getkategoriler", "cb_kat")
+            ]);
+
+            rawPaketler = paketRes;
+            rawSeanslar = seansRes;
+            rawHizmetler = hizmetRes;
+            rawKategoriler = katRes;
+
+            populateKategoriList();
+            document.getElementById('chartLoader').style.display = 'none';
+        }
+
+        // AKILLI VERİ ÇEKİCİ (Verilerin başlık adıyla karışmasını engeller)
+        function extractVal(obj, keyNames, fallBackIndex) {
+            if(!obj) return "";
+            for(let key of keyNames) {
+                if(obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== "") {
+                    let valStr = String(obj[key]).trim();
+                    if(valStr.toLowerCase() !== key.toLowerCase() && 
+                       valStr.toLowerCase() !== key.toLowerCase() + "adi" && 
+                       !valStr.toLowerCase().includes("hizmetno") &&
+                       !valStr.toLowerCase().includes("hizmetid")) {
+                        return valStr;
+                    }
                 }
+            }
+            if(fallBackIndex !== undefined) {
+                const vals = Object.values(obj);
+                if(vals.length > fallBackIndex && vals[fallBackIndex] !== undefined) {
+                    let valStr = String(vals[fallBackIndex]).trim();
+                    if(valStr !== "" && 
+                       !valStr.toLowerCase().includes("hizmetno") && 
+                       !valStr.toLowerCase().includes("id") &&
+                       !valStr.toLowerCase().includes("kategori") &&
+                       !valStr.toLowerCase().includes("hizmettercihi") &&
+                       !valStr.toLowerCase().includes("uzman")) {
+                        return valStr;
+                    }
+                }
+            }
+            return "";
+        }
+
+        function populateKategoriList() {
+            const sel = document.getElementById('filterKategori');
+            const katSet = new Set();
+
+            rawPaketler.forEach(p => {
+                const h = extractVal(p, ["hizmetPaketTercihi", "hizmetTercihi", "hizmettercihi"], 4);
+                if (h && h.toLowerCase() !== "undefined") katSet.add(h);
             });
 
-            if(kategoriler.length === 0) {
-                globalSeansData.forEach(s => {
-                    if(s.kategori && !kategoriler.includes(s.kategori.trim())) {
-                        kategoriler.push(s.kategori.trim());
-                    }
+            rawSeanslar.forEach(s => {
+                const k = extractVal(s, ["kategori", "kategoriAdi", "islemTipi"], 4);
+                if (k && k.toLowerCase() !== "undefined") katSet.add(k);
+            });
+
+            // Kütüphane listesindekileri de ekle
+            if (rawHizmetler) {
+                rawHizmetler.forEach(h => {
+                    const hName = extractVal(h, ["hizmetAdiid", "hizmetAdi", "hizmetadı"], 1);
+                    if (hName && hName.toLowerCase() !== "undefined") katSet.add(hName);
                 });
             }
 
-            kategoriler.sort().forEach(cat => {
-                let opt = document.createElement("option");
-                opt.value = cat;
-                opt.textContent = cat;
-                catSelect.appendChild(opt);
-            });
-        }
-
-        function kategoriDegisti() {
-            const secilenKategori = document.getElementById("categorySelect").value;
-            const prodSelect = document.getElementById("productSelect");
-            
-            prodSelect.innerHTML = '<option value="HEPSİ">-- Tüm Ürünler / İşlemler --</option>';
-            let urunler = [];
-            
-            globalStokData.forEach(item => {
-                let kat = (item.kategori || item.Kategori || "").toString().trim();
-                let urun = (item.urunAdi || item.urunadi || item.UrunAdi || item.ad || item.Ad || "").toString().trim();
-                
-                if (urun && (secilenKategori === "HEPSİ" || kat === secilenKategori)) {
-                    if (!urunler.includes(urun)) {
-                        urunler.push(urun);
-                    }
-                }
-            });
-
-            if(urunler.length === 0) {
-                globalSeansData.forEach(s => {
-                    let kat = (s.kategori || "").toString().trim();
-                    let urun = (s.urunAdi || s.urunadi || "").toString().trim();
-                    if (urun && (secilenKategori === "HEPSİ" || kat === secilenKategori)) {
-                        if (!urunler.includes(urun)) {
-                            urunler.push(urun);
-                        }
-                    }
+            // Stok listesindeki kategorileri de ekle
+            if (rawKategoriler) {
+                rawKategoriler.forEach(k => {
+                    const kName = extractVal(k, ["kategoriAdi", "katergoriAdi"], 1);
+                    if(kName && kName.toLowerCase() !== "undefined") katSet.add(kName);
                 });
             }
 
-            urunler.sort().forEach(u => {
-                let opt = document.createElement("option");
-                opt.value = u;
-                opt.textContent = u;
-                prodSelect.appendChild(opt);
+            Array.from(katSet).sort().forEach(k => {
+                sel.add(new Option(k, k));
             });
-
-            analizEtVeGrafikleriGuncelle();
         }
 
-        function analizEtVeGrafikleriGuncelle() {
-            const secilenKat = document.getElementById("categorySelect").value;
-            const secilenUrun = document.getElementById("productSelect").value;
-
-            let uzmanOzeti = {};
-
-            globalSeansData.forEach(s => {
-                let uzman = (s.uzman || s.uzmanAdi || "Tanımsız Uzman").toString().trim();
-                
-                // 🛑 KRİTİK FİLTRE: Sadece salonKullanicilari tablosunda rolü "Uzman" olanlar grafiğe girebilir
-                if (!validUzmanNames.includes(uzman)) {
-                    return; 
+        // GÜÇLENDİRİLMİŞ TARİH MOTORU
+        function isDateInRange(dateValue, startObj, endObj) {
+            if (!startObj && !endObj) return true; 
+            if (!dateValue) return true; 
+            
+            let d;
+            if (dateValue instanceof Date) {
+                d = dateValue;
+            } else if (typeof dateValue === 'string') {
+                let str = dateValue.split(' ')[0].split('T')[0];
+                if (str.includes('.')) {
+                    let parts = str.split('.');
+                    if(parts.length >= 3) d = new Date(parts[2], parts[1]-1, parts[0]);
+                } else if (str.includes('/')) {
+                     let parts = str.split('/');
+                     if(parts.length >= 3) d = new Date(parts[2], parts[1]-1, parts[0]);
+                } else {
+                    d = new Date(str);
                 }
+            } else {
+                d = new Date(dateValue);
+            }
+            
+            if (!d || isNaN(d.getTime())) return true; 
+            
+            d.setHours(0,0,0,0);
+            if (startObj) {
+                let s = new Date(startObj); s.setHours(0,0,0,0);
+                if (d < s) return false;
+            }
+            if (endObj) {
+                let e = new Date(endObj); e.setHours(23,59,59,999);
+                if (d > e) return false;
+            }
+            return true;
+        }
 
-                let seansKat = (s.kategori || "").toString().trim();
-                let seansUrun = (s.urunAdi || s.urunadi || "").toString().trim();
+        function verileriIsle() {
+            const filtKat = document.getElementById('filterKategori').value;
+            
+            const filterStartDate = document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null;
+            const filterEndDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null;
 
-                let katUyumlu = (secilenKat === "HEPSİ" || seansKat === secilenKat);
-                let urunUyumlu = (secilenUrun === "HEPSİ" || seansUrun === secilenUrun);
+            let adetByKategori = {}, adetByUzman = {}, adetByDetay = {};
+            let totalCiro = 0, totalAdet = 0, totalMaliyet = 0;
 
-                if (katUyumlu && urunUyumlu) {
-                    let ciro = parseFloat(s.ciro || s.Gelir || 0);
+            function addData(cat, uzman, detay, ciroVal, adetVal) {
+                if(!adetByKategori[cat]) adetByKategori[cat] = 0;
+                if(!adetByUzman[uzman]) adetByUzman[uzman] = 0;
+                if(!adetByDetay[detay]) adetByDetay[detay] = 0;
 
-                    if (!uzmanOzeti[uzman]) {
-                        uzmanOzeti[uzman] = { adet: 0, ciro: 0 };
-                    }
-                    uzmanOzeti[uzman].adet += 1;
-                    uzmanOzeti[uzman].ciro += ciro;
+                adetByKategori[cat] += adetVal;
+                adetByUzman[uzman] += adetVal;
+                adetByDetay[detay] += adetVal;
+
+                totalCiro += ciroVal;
+                totalAdet += adetVal;
+            }
+
+            // 1. Paket (Hizmet) Gelirleri
+            rawPaketler.forEach(p => {
+                if(!p) return;
+                const cat = extractVal(p, ["hizmetPaketTercihi", "hizmetTercihi", "hizmettercihi"], 4) || "Tanımsız Hizmet";
+                const uzman = extractVal(p, ["uzman", "hizmetUzman"], 2) || "Belirsiz Uzman";
+                const detay = cat; 
+                
+                const ciroRaw = extractVal(p, ["odenenMiktar", "hizmetAraOdeme", "odenenmiktar", "toplamTutar"], 7);
+                const ciro = safeFloat(ciroRaw);
+                
+                let pDate = extractVal(p, ["paketTarihi", "pakettarihi", "kayitTarihi"], 11);
+
+                if(!isDateInRange(pDate, filterStartDate, filterEndDate)) return;
+                if(filtKat !== "ALL" && cat !== filtKat) return;
+
+                if (ciro > 0 || cat !== "Tanımsız Hizmet") {
+                    addData(cat, uzman, detay, ciro, 1); 
                 }
             });
 
-            const uzmanIsimleri = Object.keys(uzmanOzeti).sort();
+            // 2. Seans (Kabin / Stok) Gelir & Giderleri
+            rawSeanslar.forEach(s => {
+                if(!s) return;
+                const cat = extractVal(s, ["kategori", "kategoriAdi", "islemTipi"], 4) || "Tanımsız Kategori";
+                const uzman = extractVal(s, ["uzman", "uzmanAdi"], 2) || "Belirsiz Uzman";
+                const detay = extractVal(s, ["urunAdi", "kullanilanUrun", "urunadi"], 5) || "Tanımsız İşlem";
+                
+                const ciroRaw = extractVal(s, ["ciro", "gelir"], 6);
+                const maliyetRaw = extractVal(s, ["masraflar", "masraf", "maliyet"], 7);
+                
+                const ciro = safeFloat(ciroRaw);
+                const maliyet = safeFloat(maliyetRaw);
+                
+                let islemTarihiDegeri = extractVal(s, ["islemTarihi", "islemtarihi", "tarih"], 1);
 
-            if (uzmanIsimleri.length === 0) {
+                if(!isDateInRange(islemTarihiDegeri, filterStartDate, filterEndDate)) return;
+                if(filtKat !== "ALL" && cat !== filtKat) return;
+
+                if (ciro > 0 || maliyet > 0 || cat !== "Tanımsız Kategori") {
+                    addData(cat, uzman, detay, ciro, 1);
+                    totalMaliyet += maliyet;
+                }
+            });
+
+            if(totalAdet === 0 && totalCiro === 0 && totalMaliyet === 0) {
                 grafikleriKapatVeBosMesajYaz();
                 return;
             }
 
-            document.getElementById("cntCountArea").style.display = "flex";
-            document.getElementById("cntRevenueArea").style.display = "flex";
-            let eskiMesajlar = document.querySelectorAll(".no-data-msg");
-            eskiMesajlar.forEach(m => m.remove());
+            document.getElementById("emptyStateArea").style.display = "none";
+            document.getElementById("summaryCards").style.display = "grid";
+            document.getElementById("cntCountArea").style.display = "block";
 
-            let adetVerileri = [];
-            let ciroVerileri = [];
-            let toplamAdet = 0;
-            let toplamCiro = 0;
+            const netKar = totalCiro - totalMaliyet;
 
-            uzmanIsimleri.forEach(uzm => {
-                adetVerileri.push(uzmanOzeti[uzm].adet);
-                ciroVerileri.push(uzmanOzeti[uzm].ciro);
-                toplamAdet += uzmanOzeti[uzm].adet;
-                toplamCiro += uzmanOzeti[uzm].ciro;
-            });
+            document.getElementById('valTotalRevenue').innerText = `₺${totalCiro.toLocaleString('tr-TR', {minimumFractionDigits:2})}`;
+            document.getElementById('valTotalCost').innerText = `₺${totalMaliyet.toLocaleString('tr-TR', {minimumFractionDigits:2})}`;
+            document.getElementById('valNetProfit').innerText = `₺${netKar.toLocaleString('tr-TR', {minimumFractionDigits:2})}`;
 
-            cizAdetGrafigi(uzmanIsimleri, adetVerileri);
-            yazAdetEfsanesi(uzmanIsimleri, adetVerileri, toplamAdet);
-
-            cizCiroGrafigi(uzmanIsimleri, ciroVerileri);
-            yazCiroEfsanesi(uzmanIsimleri, ciroVerileri, toplamCiro);
+            drawDonutChart('chartCountKategori', adetByKategori, 'Kategori Dağılımı');
+            drawDonutChart('chartCountUzman', adetByUzman, 'Uzman Dağılımı');
+            drawDonutChart('chartCountDetay', adetByDetay, 'Ürün / İşlem Dağılımı');
+            
+            buildLegend('legendCountKategori', adetByKategori, totalAdet);
+            buildLegend('legendCountUzman', adetByUzman, totalAdet);
+            buildLegend('legendCountDetay', adetByDetay, totalAdet);
         }
 
-        function cizAdetGrafigi(isimler, veriler) {
-            const ctx = document.getElementById('countPieChart').getContext('2d');
-            if (myCountChart) { myCountChart.destroy(); }
+        function drawDonutChart(canvasId, dataObj, titleStr) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
+            }
 
-            myCountChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: isimler,
-                    datasets: [{
-                        data: veriler,
-                        backgroundColor: renkPaleti.slice(0, isimler.length),
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+            const labels = Object.keys(dataObj);
+            const data = Object.values(dataObj);
 
-        function yazAdetEfsanesi(isimler, veriler, genelToplam) {
-            const container = document.getElementById('legendBoxCount');
-            container.innerHTML = '';
-            isimler.forEach((isim, index) => {
-                let yuzde = genelToplam > 0 ? Math.round((veriler[index] / genelToplam) * 100) : 0;
-                container.innerHTML += `
-                    <div class="legend-item">
-                        <span class="legend-color" style="background:${renkPaleti[index]}"></span>
-                        <div style="flex:1; display:flex; justify-content:space-between;">
-                            <strong>${isim}</strong>
-                            <span>${veriler[index]} Seans (%${yuzde})</span>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function cizCiroGrafigi(isimler, veriler) {
-            const ctx = document.getElementById('revenuePieChart').getContext('2d');
-            if (myRevenueChart) { myRevenueChart.destroy(); }
-
-            myRevenueChart = new Chart(ctx, {
+            chartInstances[canvasId] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: isimler,
+                    labels: labels.length > 0 ? labels : ["Veri Yok"],
                     datasets: [{
-                        data: veriler,
-                        backgroundColor: renkPaleti.slice(0, isimler.length),
-                        borderWidth: 2
+                        data: data.length > 0 ? data : [1],
+                        backgroundColor: data.length > 0 ? sweetWarmColors : ['#f1f5f9'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff',
+                        hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
+                    cutout: '60%',
+                    plugins: {
+                        legend: { display: false }, 
+                        title: { display: true, text: titleStr, font: {family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '700'}, padding: { bottom: 15 }, color: '#334155' },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#0f172a',
+                            bodyColor: '#334155',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 10,
+                            callbacks: {
+                                label: function(c) {
+                                    if(data.length === 0) return " Veri Yok";
+                                    return ' ' + c.parsed + " Adet";
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
 
-        function yazCiroEfsanesi(isimler, veriler, genelToplam) {
-            const container = document.getElementById('legendBoxRevenue');
-            container.innerHTML = '';
-            isimler.forEach((isim, index) => {
-                let yuzde = genelToplam > 0 ? Math.round((veriler[index] / genelToplam) * 100) : 0;
+        function buildLegend(containerId, dataObj, genelToplam) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            const siraliVeriler = Object.entries(dataObj).sort((a, b) => b[1] - a[1]);
+
+            siraliVeriler.forEach((item, index) => {
+                const isim = item[0];
+                const deger = item[1];
+                let yuzde = genelToplam > 0 ? Math.round((deger / genelToplam) * 100) : 0;
+                
+                const renk = sweetWarmColors[index % sweetWarmColors.length];
+
                 container.innerHTML += `
                     <div class="legend-item">
-                        <span class="legend-color" style="background:${renkPaleti[index]}"></span>
-                        <div style="flex:1; display:flex; justify-content:space-between;">
-                            <strong>${isim}</strong>
-                            <span>₺${veriler[index].toLocaleString('tr-TR', {maximumFractionDigits:0})} (%${yuzde})</span>
+                        <span class="legend-color" style="background:${renk}"></span>
+                        <div style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                            <span class="legend-text" title="${isim}">${isim}</span>
+                            <span class="legend-val">${deger} Adet <span style="color:#94a3b8; font-weight:600; font-size:0.65rem;">(%${yuzde})</span></span>
                         </div>
                     </div>`;
             });
         }
 
         function grafikleriKapatVeBosMesajYaz() {
+            document.getElementById("summaryCards").style.display = "none";
             document.getElementById("cntCountArea").style.display = "none";
-            document.getElementById("cntRevenueArea").style.display = "none";
             
-            let eskiMesajlar = document.querySelectorAll(".no-data-msg");
-            eskiMesajlar.forEach(m => m.remove());
-
-            const cards = document.querySelectorAll(".charts-grid .card");
-            cards.forEach(card => {
-                let div = document.createElement("div");
-                div.className = "no-data-msg";
-                div.innerHTML = `<i class="fa-solid fa-folder-open" style="font-size:24px; margin-bottom:10px; display:block; color:#cbd5e1;"></i> Seçilen kriterlere ait seans kaydı bulunamadı.`;
-                card.appendChild(div);
-            });
+            const emptyArea = document.getElementById("emptyStateArea");
+            emptyArea.style.display = "block";
+            emptyArea.innerHTML = `
+                <i class="fas fa-search-minus" style="font-size: 32px; color: #fecdd3; margin-bottom: 12px; display: block;"></i>
+                Seçilen kriterlere ve tarih aralığına ait işlem kaydı bulunamadı. Lütfen farklı tarihler deneyin.
+            `;
         }
     </script>
 </body>
