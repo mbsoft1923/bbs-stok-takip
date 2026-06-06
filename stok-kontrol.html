@@ -158,7 +158,17 @@
         // DataLabels eklentisini küresel olarak kaydediyoruz
         Chart.register(ChartDataLabels);
 
-        document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+            // --- 1. STANDART GÜVENLİK KONTROLÜ (Giriş yapılmış mı?) ---
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            
+            // Eğer giriş yapılmamışsa (bilet yoksa) ana kapıya postala
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return; // İzinsiz girişte alttaki verileri çekme işlemlerini durdur
+            }
+
+            // --- 2. GÜVENLİKTEN GEÇİLDİ, GRAFİKLERİ VE VERİLERİ YÜKLE ---
             verileriBuluttanCek();
         });
 
