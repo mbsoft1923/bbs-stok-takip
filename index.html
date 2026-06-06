@@ -194,10 +194,10 @@
             <p class="subtitle">Yönetici paneline erişmek için e-posta adresinizi ve şifrenizi girin.</p>
             
             <div class="form-group">
-                <label>E-Posta</label>
+                <label>E-Posta / Kullanıcı Adı</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-envelope"></i>
-                    <input type="text" id="username" placeholder="mailadresi@gmail.com" required autocomplete="off">
+                    <input type="text" id="username" placeholder="Kullanıcı adınızı girin" required autocomplete="off">
                 </div>
             </div>
             
@@ -239,28 +239,35 @@
                 return;
             }
 
+            // Butonu yükleniyor durumuna alıyoruz
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Doğrulanıyor...';
 
-            const cbName = "login_cb_" + Math.floor(Math.random() * 1000000);
-            
-            window[cbName] = function(res) {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Giriş Yap';
-                }
+            try {
+                // İstek URL'si oluşturuluyor
+                const fetchUrl = `${SCRIPT_URL}?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
                 
-                if(res && res.status === "success" && res.user) {
+                // Güvenli ve modern Fetch API ile istek atıyoruz (JSONP sorunları geride kaldı)
+                const response = await fetch(fetchUrl);
+                const res = await response.json();
+
+                // Backend verileri nerede gönderiyorsa ona göre yakalama (mevcut mantığınız korundu)
+                if(res && res.status === "success") {
+                    
+                    let userData = res.user || res;
+
                     localStorage.setItem('aktifKullanici', JSON.stringify({
-                        id: res.user.id || res.id,
-                        adSoyad: res.user.adSoyad,
-                        eposta: res.user.eposta,
-                        rol: res.user.rol
+                        id: userData.id || "Bilinmiyor",
+                        adSoyad: userData.adSoyad || "İsimsiz",
+                        eposta: userData.eposta || user,
+                        rol: userData.rol || "Kullanıcı"
                     }));
 
-                    alert(`👋 Giriş Başarılı! Hoş geldiniz, ${res.user.adSoyad}`);
+                    alert(`👋 Giriş Başarılı! Hoş geldiniz, ${userData.adSoyad || 'Kullanıcı'}`);
                     
-                    if(String(res.user.eposta).toLowerCase() === "admin") {
+                    // Admin rol kontrolü
+                    let userRole = String(userData.rol).toLowerCase();
+                    if(userRole.includes("admin") || userRole.includes("müdür") || String(user).toLowerCase() === "admin") {
                         window.location.href = "kullanici-yonetimi.html";
                     } 
                     else {
@@ -269,18 +276,18 @@
                 } else {
                     alert(res.message || "❌ Giriş bilgileri hatalı veya kullanıcı bulunamadı!");
                 }
-                
-                const scriptNode = document.getElementById(cbName);
-                if (scriptNode) scriptNode.remove();
-            };
-
-            let scriptEkle = document.createElement('script');
-            scriptEkle.id = cbName;
-            scriptEkle.src = `${SCRIPT_URL}?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&callback=${cbName}`;
-            document.body.appendChild(scriptEkle);
+            } catch (error) {
+                console.error("Giriş işlemi sırasında bağlantı hatası oluştu:", error);
+                alert("❌ Sunucuya bağlanılamadı. Lütfen internet bağlantınızı ve sistem durumunu kontrol edin.");
+            } finally {
+                // Hata olsa da olmasa da butonu eski aktif durumuna çevir
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Giriş Yap';
+            }
         }
 
         window.onload = function() {
+            // Sayfa yüklendiğinde eski oturum verilerini temizle
             localStorage.removeItem('aktifKullanici');
         };
     </script>
