@@ -3,51 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahar Beauty Studio - Maliyet & Kar Analizi</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Bahar Beauty Studio - Detaylı Maliyet & Kar Analizi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #f0f4f8; padding: 30px 20px; font-family: 'Playfair Display', serif; min-height: 100vh; }
+        body { 
+            background-color: #f4f7f9; 
+            padding: 25px 20px; 
+            font-family: 'Playfair Display', serif; 
+            min-height: 100vh; 
+            color: #1e293b; 
+        }
+        
+        /* KOMPAKT YAPI: Sayfa enine yayılmasın diye 1200px sınırı */
         .wrapper { max-width: 1200px; margin: 0 auto; width: 100%; }
         
-        /* 💎 KURUMSAL ÜST BAR STİLLERİ */
-        .global-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background-color: white; padding: 15px 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 6px solid #10b981; width: 100%; }
+        .global-page-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; background-color: white; padding: 15px 30px; 
+            border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+            border-left: 6px solid #00a8b5; 
+        }
         .global-header-title-area { display: flex; flex-direction: column; text-align: left; }
-        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #10b981; line-height: 1.1; margin-bottom: 2px; }
-        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
-        .global-btn-back { font-family: 'Segoe UI', sans-serif; background-color: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; padding: 10px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; transition: all 0.25s; font-size: 0.9rem; white-space: nowrap; }
-        .global-btn-back:hover { background-color: #10b981; color: white; transform: scale(1.02); }
+        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #00a8b5; line-height: 1.1; margin-bottom: 2px; }
+        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
+        .global-btn-back { background-color: #e0f7fa; color: #00a8b5; border: 1px solid #b2ebf2; padding: 8px 18px; border-radius: 10px; font-weight: 700; text-decoration: none; transition: all 0.25s; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif;}
+        .global-btn-back:hover { background-color: #00a8b5; color: white; transform: translateY(-1px); }
 
-        /* 📅 YENİ SORGULAMA BAR DÜZENİ (Tarihler Solda, Buton Sağda) */
-        .mor-arsiv-sorgu-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background-color: white; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 18px 25px; margin-bottom: 25px; font-family: 'Segoe UI', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .arsiv-sorgu-sol { display: flex; align-items: center; gap: 12px; }
-        .arsiv-sorgu-sol label { font-weight: 700; color: #475569; font-size: 0.95rem; white-space: nowrap; }
-        .mor-arsiv-sorgu-bar input[type="date"] { padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.9rem; outline: none; color: #334155; transition: border 0.2s; }
-        .mor-arsiv-sorgu-bar input[type="date"]:focus { border-color: #10b981; background: white; }
-        
-        .btn-arsiv-getir { background-color: #10b981; color: white; border: none; padding: 11px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: background 0.2s; white-space: nowrap; }
-        .btn-arsiv-getir:hover { background-color: #059669; }
+        .card { 
+            background-color: white; border-radius: 14px; padding: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;
+            position: relative; margin-bottom: 20px;
+        }
+        .card-title { 
+            font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #0f172a; 
+            margin-bottom: 15px; font-weight: 800; border-bottom: 2px dashed #f1f5f9; 
+            padding-bottom: 10px; display: flex; align-items: center; gap: 8px;
+        }
 
-        /* 📊 FİNANS KARTLARI */
-        .finance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
-        @media (max-width: 768px) { .finance-grid { grid-template-columns: 1fr; } }
+        .stat-card {
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px 20px;
+            display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02); transition: transform 0.2s ease;
+            position: relative; overflow: hidden;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        .stat-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 8px; }
         
-        .f-card { background: white; border-radius: 14px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border-bottom: 4px solid #cbd5e1; display: flex; flex-direction: column; justify-content: center; }
-        .f-card.c-revenue { border-bottom-color: #00a8b5; }
-        .f-card.c-cost { border-bottom-color: #ef4444; }
-        .f-card.c-profit { border-bottom-color: #10b981; }
-        
-        .f-label { font-family: 'Segoe UI', sans-serif; font-size: 0.85rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-        .f-value { font-family: 'Segoe UI', sans-serif; font-size: 1.8rem; font-weight: 800; color: #1e293b; }
+        .theme-teal .stat-icon { background: #ccfbf1; color: #0d9488; }
+        .theme-rose .stat-icon { background: #ffe4e6; color: #e11d48; }
+        .theme-emerald .stat-icon { background: #d1fae5; color: #059669; }
 
-        /* 📉 GRAFİK ALANI */
-        .chart-section { background: white; border-radius: 14px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; }
-        .chart-title { font-size: 1.1rem; color: #1e293b; font-weight: 700; margin-bottom: 20px; border-bottom: 2px dashed #f1f5f9; padding-bottom: 8px; width: 100%; display: flex; align-items: center; gap: 8px; }
-        .chart-box { width: 100%; max-width: 420px; height: 340px; position: relative; margin-top: 10px; }
+        .stat-label { font-size: 0.7rem; font-family: 'Plus Jakarta Sans', sans-serif; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .stat-val { font-size: 1.5rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px; }
+        
+        .theme-teal .stat-val { color: #0f766e; }
+        .theme-rose .stat-val { color: #be123c; }
+        .theme-emerald .stat-val { color: #047857; }
+
+        .stat-desc { font-size: 0.65rem; color: #94a3b8; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; margin-top: 4px; }
+
+        /* KUTU VE LİSTE GÖRÜNÜMLERİ */
+        select, input[type="date"] { 
+            width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; 
+            border-radius: 8px; font-size: 0.85rem; outline: none; background: #f8fafc;
+            transition: all 0.2s; font-weight: 600; color: #334155; cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif; height: 40px;
+        }
+        select:focus, input[type="date"]:focus { border-color: #00a8b5; background: white; box-shadow: 0 0 0 3px rgba(0, 168, 181, 0.1); }
+        
+        .btn-hesapla {
+            background-color: #0f766e; color: white; border: none; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer; transition: all 0.2s; height: 40px; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 4px 10px rgba(15, 118, 110, 0.2);
+        }
+        .btn-hesapla:hover { background-color: #115e59; transform: translateY(-1px); }
+
+        .loader-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; border-radius: 14px;
+        }
+        .spinner { border: 4px solid #f1f5f9; border-top: 4px solid #00a8b5; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #chartsArea { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -56,148 +104,479 @@
         <div class="global-page-header">
             <div class="global-header-title-area">
                 <span class="global-header-brand">Bahar Beauty Studio</span>
-                <span class="global-header-sub">| Kabin Maliyet & Net Kâr Analiz Motoru</span>
+                <span class="global-header-sub">✨ Dinamik Maliyet ve Kar Analizi</span>
             </div>
-            <a href="dashboard.html" class="global-btn-back">🏠 Ana Yönetim Paneli</a>
+            <a href="dashboard.html" class="global-btn-back"><i class="fas fa-home"></i> Ana Yönetim Paneli</a>
         </div>
 
-        <div class="mor-arsiv-sorgu-bar">
-            <div class="arsiv-sorgu-sol">
-                <label><i class="fa-solid fa-calendar-days" style="color:#10b981;"></i> Analiz Tarih Aralığı:</label>
-                <input type="date" id="analizBaslangic" onchange="tarihselHesaplaVeFiltrele()">
-                <span style="color:#cbd5e1; font-weight:bold;">-</span>
-                <input type="date" id="analizBitis" onchange="tarihselHesaplaVeFiltrele()">
+        <div class="card">
+            <div id="chartLoader" class="loader-overlay">
+                <div class="spinner"></div>
+                <p class="mt-3 font-bold text-slate-500 font-sans text-sm">Veriler Buluttan Çekiliyor...</p>
             </div>
-            <button class="btn-arsiv-getir" onclick="buluttanVerileriYenile()"><i class="fa-solid fa-magnifying-glass"></i> Sorgula ve Hesapla</button>
-        </div>
+            
+            <div class="card-title">
+                <span><i class="fas fa-filter text-teal-500"></i> Analiz Filtreleri ve Performans Dağılımı</span>
+            </div>
+            
+            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-5">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-4">
+                    <div>
+                        <label class="block text-[0.7rem] font-bold font-sans text-slate-500 mb-1"><i class="fas fa-tags text-teal-500 mr-1"></i> Hizmet Kategorisi</label>
+                        <select id="filterHizmet" onchange="resetOtherFilter('hizmet')">
+                            <option value="ALL">-- Seçim Yapınız --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[0.7rem] font-bold font-sans text-slate-500 mb-1"><i class="fas fa-boxes text-rose-400 mr-1"></i> Stok Kategorisi</label>
+                        <select id="filterStokKategori" onchange="resetOtherFilter('stok')">
+                            <option value="ALL">-- Seçim Yapınız --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[0.7rem] font-bold font-sans text-slate-500 mb-1"><i class="fas fa-user-tie text-emerald-500 mr-1"></i> Uzman Seçimi</label>
+                        <select id="filterUzman">
+                            <option value="ALL">-- Tüm Uzmanlar --</option>
+                        </select>
+                    </div>
+                </div>
 
-        <div class="finance-grid">
-            <div class="f-card c-revenue">
-                <span class="f-label">💰 Toplam Brüt Ciro</span>
-                <span class="f-value" id="lblRevenue">₺0,00</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-end pt-4 border-t border-slate-200">
+                    <div>
+                        <label class="block text-[0.7rem] font-bold font-sans text-slate-500 mb-1"><i class="far fa-calendar-alt text-indigo-400 mr-1"></i> Başlangıç Tarihi</label>
+                        <input type="date" id="startDate" title="Başlangıç Tarihi">
+                    </div>
+                    <div>
+                        <label class="block text-[0.7rem] font-bold font-sans text-slate-500 mb-1"><i class="far fa-calendar-check text-indigo-400 mr-1"></i> Bitiş Tarihi</label>
+                        <input type="date" id="endDate" title="Bitiş Tarihi">
+                    </div>
+                    <div>
+                        <button class="btn-hesapla" onclick="updateChart()">
+                            <i class="fas fa-calculator"></i> Raporu Hesapla
+                        </button>
+                    </div>
+                </div>
+                
             </div>
-            <div class="f-card c-cost">
-                <span class="f-label">🛑 Sarf Malzeme Maliyeti</span>
-                <span class="f-value" id="lblCost" style="color:#ef4444;">₺0,00</span>
-            </div>
-            <div class="f-card c-profit">
-                <span class="f-label">🟢 Net Stüdyo Kârı</span>
-                <span class="f-value" id="lblProfit" style="color:#10b981;">₺0,00</span>
-            </div>
-        </div>
 
-        <div class="chart-section">
-            <div class="chart-title"><i class="fa-solid fa-chart-pie" style="color:#10b981;"></i> Maliyet / Net Kâr Dağılım Oranı</div>
-            <div class="chart-box">
-                <canvas id="financeMixChart"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="stat-card theme-teal">
+                    <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <div class="stat-label">Toplam Ciro / Tahsilat</div>
+                    <div class="stat-val" id="valTotalIncome">₺0.00</div>
+                    <div class="stat-desc">Belirtilen kriterlere ait toplam ciro</div>
+                </div>
+                
+                <div class="stat-card theme-rose">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-label">Kullanılan Stok Maliyeti</div>
+                    <div class="stat-val" id="valTotalCost">₺0.00</div>
+                    <div class="stat-desc">Kabin Seanslarından gelen stok masrafı</div>
+                </div>
+                
+                <div class="stat-card theme-emerald">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-label">Net Analiz Karı</div>
+                    <div class="stat-val" id="valNetProfit">₺0.00</div>
+                    <div class="stat-desc">Ciro - Stok Maliyeti Formülü</div>
+                </div>
             </div>
+
+            <div id="chartsArea"></div>
         </div>
     </div>
 
     <script>
+        // KENDİ GOOGLE APPS SCRIPT URL'NİZİ BURAYA YAPIŞTIRIN
         const API_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
-        let rawSeansData = [];
-        let financeChartInstance = null;
 
-        document.addEventListener("DOMContentLoaded", function() {
-            buluttanVerileriYenile();
-        });
+        let rawPaketler = []; 
+        let rawSeanslar = []; 
+        let rawStoklar = [];  
+        let rawUzmanlar = []; 
+        
+        let stokUnitCostMap = {}; 
+        let chartInstances = []; 
 
-        // Bulut Veritabanından Canlı Çekim Modülü
-        function buluttanVerileriYenile() {
-            const script = document.createElement('script');
-            script.src = `${API_URL}?action=getseanslar&callback=seansVeriGeriDonus`;
-            document.body.appendChild(script);
-        }
+window.onload = () => {
+            // --- 1. VIP GÜVENLİK KONTROLÜ ---
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            
+            // Eğer giriş yapılmamışsa ana kapıya postala
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return;
+            }
 
-        window.seansVeriGeriDonus = function(res) {
-            rawSeansData = Array.isArray(res) ? res : [];
-            tarihselHesaplaVeFiltrele();
+            // 2. Rol kontrolü: Sadece Admin ve Müdür girebilir
+            let rol = String(aktifKullanici.rol).toLowerCase().trim();
+            if (!rol.includes("admin") && !rol.includes("müdür")) {
+                alert("Yetkisiz Erişim: Bu analiz paneli sadece yöneticilere açıktır!");
+                window.location.href = "dashboard.html"; // Yetkisizleri ana panele geri gönder
+                return; // Burası çok kritik: Yetki yoksa o kıymetli script motorunu çalıştırmaz!
+            }
+
+            // --- 3. GÜVENLİKTEN GEÇİLDİ, KIYMETLİ MOTORU ÇALIŞTIR ---
+            fetchBulutData();
         };
 
-        // Tarih formatlama motoru (Gelen karmaşık tarih veya string yapıları güvenle ayrıştırır)
-        function tarihYorumla(tarihStr) {
-            if (!tarihStr) return null;
-            tarihStr = String(tarihStr).trim();
-            if (tarihStr.includes(' ')) tarihStr = tarihStr.split(' ')[0];
-
-            if (tarihStr.includes('-')) {
-                const [y, m, d] = tarihStr.split('-');
-                return new Date(y, m - 1, d, 0, 0, 0);
-            }
-            if (tarihStr.includes('.')) {
-                const [d, m, y] = tarihStr.split('.');
-                return new Date(y, m - 1, d, 0, 0, 0);
-            }
-            const parsed = new Date(tarihStr);
-            return isNaN(parsed.getTime()) ? null : parsed;
+        function getSafeArray(val) {
+            if (!val) return [];
+            if (Array.isArray(val)) return val;
+            if (val.data && Array.isArray(val.data)) return val.data;
+            return [];
         }
 
-        // Ana Hesaplama ve Filtreleme Motoru
-        function tarihselHesaplaVeFiltrele() {
-            const baslangicInput = document.getElementById('analizBaslangic').value;
-            const bitisInput = document.getElementById('analizBitis').value;
+        function normalizeStr(str) {
+            return String(str || "").trim().toLowerCase();
+        }
 
-            let baslangicTarihi = tarihYorumla(baslangicInput);
-            let bitisTarihi = tarihYorumla(bitisInput);
-            if (bitisTarihi) bitisTarihi.setHours(23, 59, 59, 999);
+        function safeFloat(val) {
+            if (!val) return 0;
+            let cleanVal = String(val).replace(/\s/g, '').replace(',', '.');
+            let parsed = parseFloat(cleanVal);
+            return isNaN(parsed) ? 0 : parsed;
+        }
 
-            let toplamCiro = 0;
-            let toplamMaliyet = 0;
+        // Listelerin Birbirini Ezmesini Önleyen Motor
+        function resetOtherFilter(source) {
+            if (source === 'hizmet') {
+                document.getElementById('filterStokKategori').value = "ALL";
+            } else if (source === 'stok') {
+                document.getElementById('filterHizmet').value = "ALL";
+            }
+        }
 
-            // Filtreleme Algoritması
-            rawSeansData.forEach(row => {
-                let seansZamaniStr = row.islemTarihi || row.tarih || row.islemTarihiSaat || '';
-                let seansTarihi = tarihYorumla(seansZamaniStr);
+        function jsonpFetch(action, callbackBaseName) {
+            return new Promise((resolve) => {
+                const uniqueHash = Math.random().toString(36).substring(2, 10);
+                const callbackName = callbackBaseName + "_" + uniqueHash;
+                const scriptId = "jsonp_script_" + uniqueHash;
 
-                // Tarih kriteri kontrolü
-                if (seansTarihi) {
-                    if (baslangicTarihi && seansTarihi < baslangicTarihi) return;
-                    if (bitisTarihi && seansTarihi > bitisTarihi) return;
-                }
+                window[callbackName] = function(response) {
+                    resolve(getSafeArray(response));
+                    const s = document.getElementById(scriptId);
+                    if(s) s.remove();
+                    delete window[callbackName];
+                };
 
-                let ciro = parseFloat(row.gelir !== undefined ? row.gelir : (row.ciro !== undefined ? row.ciro : (row.alınanÜcret !== undefined ? row.alınanÜcret : 0))) || 0;
-                let masraf = parseFloat(row.masraflar !== undefined ? row.masraflar : (row.masraf !== undefined ? row.masraf : (row.maliyet !== undefined ? row.maliyet : (row.ürünMaliyeti !== undefined ? row.ürünMaliyeti : 0)))) || 0;
+                const script = document.createElement('script');
+                script.id = scriptId;
+                script.src = `${API_URL}?action=${action}&callback=${callbackName}&_=${new Date().getTime()}`;
+                script.onerror = () => { resolve([]); };
+                document.body.appendChild(script);
+            });
+        }
 
-                toplamCiro += ciro;
-                toplamMaliyet += masraf;
+        async function fetchBulutData() {
+            document.getElementById('chartLoader').style.display = 'flex';
+            
+            const [paketRes, seansRes, stokRes, uzmanRes] = await Promise.all([
+                jsonpFetch("getpaketler", "cb_paket"),
+                jsonpFetch("getseanslar", "cb_seans"),
+                jsonpFetch("getstok", "cb_stok"),
+                jsonpFetch("getkullanicilar", "cb_uzman")
+            ]);
+
+            rawPaketler = paketRes;
+            rawSeanslar = seansRes;
+            rawStoklar = stokRes;
+            rawUzmanlar = uzmanRes;
+
+            processGlobalSetup();
+            document.getElementById('chartLoader').style.display = 'none';
+        }
+
+        function processGlobalSetup() {
+            rawStoklar.forEach(s => {
+                const vals = Object.values(s);
+                const urunAdi = String(s.urunadi || s["Ürün Adı"] || vals[1] || "").trim();
+                const kat = String(s.kategori || s["Kategori"] || vals[2] || "Bilinmiyor").trim();
+                stokUnitCostMap[normalizeStr(urunAdi)] = { kategori: kat };
             });
 
-            let netKar = toplamCiro - toplamMaliyet;
-
-            // DOM Güncelleme Alanı
-            document.getElementById('lblRevenue').textContent = "₺" + toplamCiro.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('lblCost').textContent = "₺" + toplamMaliyet.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('lblProfit').textContent = "₺" + netKar.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            // Finansal Pasta Grafiği Yeniden Çizdirme Modülü
-            buildFinanceChart(toplamMaliyet, netKar);
+            populateDropdowns();
+            
+            // İlk açılışta verileri otomatik harmanla ve ekrana dök
+            updateChart();
         }
 
-        function buildFinanceChart(cost, profit) {
-            const ctx = document.getElementById('financeMixChart').getContext('2d');
-            if (financeChartInstance) { financeChartInstance.destroy(); }
-            
-            // Eğer kâr negatifse grafikte sıfır göster ancak maliyet çarkını doğru çizdir
-            let chartProfitValue = profit < 0 ? 0 : profit;
+        function populateDropdowns() {
+            const selHizmet = document.getElementById('filterHizmet');
+            const selStokKat = document.getElementById('filterStokKategori');
+            const selUzman = document.getElementById('filterUzman');
 
-            financeChartInstance = new Chart(ctx, {
+            const hizmetSet = new Set();
+            const stokKatSet = new Set();
+            const uzmanSet = new Set();
+
+            rawPaketler.forEach(p => {
+                const vals = Object.values(p);
+                const u = String(p.hizmetUzman || p.uzman || vals[1] || "").trim();
+                const h = String(p.hizmetPaketTercihi || p.hizmettercihi || p.hizmetTercihi || vals[3] || vals[4] || "").trim();
+                
+                if (u && u !== "undefined") uzmanSet.add(u);
+                if (h && h !== "undefined" && h !== "") hizmetSet.add(h);
+            });
+
+            rawSeanslar.forEach(s => {
+                const vals = Object.values(s);
+                const u = String(s.uzman || vals[2] || "").trim();
+                const k = String(s.kategori || vals[4] || "").trim();
+                
+                if (u && u !== "undefined") uzmanSet.add(u);
+                if (k && k !== "undefined" && k !== "") stokKatSet.add(k);
+            });
+
+            Array.from(hizmetSet).sort().forEach(h => selHizmet.add(new Option(h, h)));
+            Array.from(stokKatSet).sort().forEach(k => selStokKat.add(new Option(k, k)));
+            Array.from(uzmanSet).sort().forEach(u => selUzman.add(new Option(u, u)));
+        }
+
+        function createChartCanvas(id, wrapperClass) {
+            const wrapper = document.createElement('div');
+            wrapper.className = wrapperClass;
+            const canvas = document.createElement('canvas');
+            canvas.id = id;
+            wrapper.appendChild(canvas);
+            document.getElementById('chartsArea').appendChild(wrapper);
+            return canvas;
+        }
+
+        // AKILLI TARİH KONTROL SİSTEMİ
+        function isDateInRange(dateValue, startObj, endObj) {
+            if (!startObj && !endObj) return true; // Tarih seçilmemişse her şeyi kabul et
+            if (!dateValue) return true; // Hücrede tarih yoksa kaybetmemek için kabul et
+            
+            let d;
+            if (dateValue instanceof Date) {
+                d = dateValue;
+            } else if (typeof dateValue === 'string') {
+                if (dateValue.includes('.')) {
+                    let parts = dateValue.split('.');
+                    if(parts.length >= 3) d = new Date(parts[2], parts[1]-1, parts[0]);
+                } else if (dateValue.includes('/')) {
+                     let parts = dateValue.split('/');
+                     if(parts.length >= 3) d = new Date(parts[2], parts[1]-1, parts[0]);
+                } else {
+                    d = new Date(dateValue);
+                }
+            }
+            
+            if (!d || isNaN(d.getTime())) return true; 
+            
+            d.setHours(0,0,0,0);
+            if (startObj) {
+                let s = new Date(startObj); s.setHours(0,0,0,0);
+                if (d < s) return false;
+            }
+            if (endObj) {
+                let e = new Date(endObj); e.setHours(23,59,59,999);
+                if (d > e) return false;
+            }
+            return true;
+        }
+
+        // HESAPLA BUTONUNA BASILINCA ÇALIŞAN MERKEZİ MOTOR
+        function updateChart() {
+            const filtHizmet = document.getElementById('filterHizmet').value;
+            const filtStokKat = document.getElementById('filterStokKategori').value;
+            const filtUzman = document.getElementById('filterUzman').value;
+            
+            const startStr = document.getElementById('startDate').value;
+            const endStr = document.getElementById('endDate').value;
+            const startDateObj = startStr ? new Date(startStr) : null;
+            const endDateObj = endStr ? new Date(endStr) : null;
+
+            chartInstances.forEach(c => c.destroy());
+            chartInstances = [];
+            document.getElementById('chartsArea').innerHTML = '';
+
+            let globalCiro = 0;
+            let globalMaliyet = 0;
+            let uzmanStats = {}; 
+
+            let isInitialLoad = (filtHizmet === "ALL" && filtStokKat === "ALL" && filtUzman === "ALL");
+
+            // 1. Ciro Hesaplama (Hizmet Paketlerinden)
+            if (filtStokKat === "ALL") { 
+                rawPaketler.forEach(p => {
+                    const vals = Object.values(p);
+                    const u = String(p.hizmetUzman || p.uzman || vals[1] || "Bilinmeyen Uzman").trim();
+                    const h = String(p.hizmetPaketTercihi || p.hizmettercihi || p.hizmetTercihi || vals[3] || vals[4] || "").trim();
+                    const ciro = safeFloat(p.hizmetAraOdeme || p.odenenmiktar || vals[7]);
+                    
+                    // Tarih Kontrolü
+                    let pDate = p.paketTarihi || p.pakettarihi || p.kayitTarihi || vals[11] || vals[1];
+                    if (!isDateInRange(pDate, startDateObj, endDateObj)) return;
+
+                    if (filtHizmet !== "ALL" && h !== filtHizmet) return;
+                    if (filtUzman !== "ALL" && u !== filtUzman) return;
+
+                    if (!uzmanStats[u]) uzmanStats[u] = { ciro: 0, maliyet: 0 };
+                    uzmanStats[u].ciro += ciro;
+                    globalCiro += ciro;
+                });
+            }
+
+            // 2. Kabin Seanslarından Gelen Stok Ciro ve Maliyetleri
+            if (filtHizmet === "ALL") { 
+                rawSeanslar.forEach(s => {
+                    const vals = Object.values(s);
+                    const u = String(s.uzman || vals[2] || "Bilinmeyen Uzman").trim();
+                    const kKat = String(s.kategori || vals[4] || "").trim();
+                    const ciro = safeFloat(s.ciro || vals[6]);
+                    const maliyet = safeFloat(s.masraflar || vals[7]);
+
+                    // Tarih Kontrolü
+                    let sDate = s.islemTarihi || s.islemtarihi || s.tarih || vals[1];
+                    if (!isDateInRange(sDate, startDateObj, endDateObj)) return;
+
+                    if (filtStokKat !== "ALL" && kKat !== filtStokKat) return;
+                    if (filtUzman !== "ALL" && u !== filtUzman) return;
+
+                    if (!uzmanStats[u]) uzmanStats[u] = { ciro: 0, maliyet: 0 };
+                    uzmanStats[u].ciro += ciro;
+                    uzmanStats[u].maliyet += maliyet;
+                    
+                    globalCiro += ciro;
+                    globalMaliyet += maliyet;
+                });
+            }
+
+            // 🌟 KARTLARI EKRANA YANSIT
+            document.getElementById('valTotalIncome').innerText = `₺${globalCiro.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            document.getElementById('valTotalCost').innerText = `₺${globalMaliyet.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            
+            const netProfit = globalCiro - globalMaliyet;
+            const elProfit = document.getElementById('valNetProfit');
+            elProfit.innerText = `₺${netProfit.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            elProfit.style.color = netProfit < 0 ? "#be123c" : "#047857"; 
+
+            // Alt Başlık (Zaman Dilimi Etiketi)
+            let dateSubtitle = " (Tüm Zamanlar)";
+            if (startStr && endStr) dateSubtitle = ` (${startStr} ile ${endStr} Arası)`;
+            else if (startStr) dateSubtitle = ` (${startStr} ve Sonrası)`;
+            else if (endStr) dateSubtitle = ` (${endStr} ve Öncesi)`;
+
+            // 🌟 GRAFİKLERİ DURUMA GÖRE BAS
+            const ciroColors = ['#14b8a6', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6'];
+            const maliyetColors = ['#f43f5e', '#ef4444', '#f97316', '#f59e0b', '#eab308'];
+            const karColors = ['#10b981', '#22c55e', '#84cc16', '#a3e635', '#bef264'];
+
+            if (filtStokKat !== "ALL") {
+                // 🛑 SENARYO 1: SADECE STOK KATEGORİSİ -> 3 PASTA
+                const labels = Object.keys(uzmanStats).filter(u => uzmanStats[u].ciro > 0 || uzmanStats[u].maliyet > 0);
+                const ciroData = labels.map(u => uzmanStats[u].ciro);
+                const maliyetData = labels.map(u => uzmanStats[u].maliyet);
+                const karData = labels.map(u => Math.max(0, uzmanStats[u].ciro - uzmanStats[u].maliyet)); 
+                
+                let c1 = createChartCanvas('ch1', "w-full md:w-[31%] h-[260px] bg-white border border-slate-100 p-2 rounded-xl");
+                chartInstances.push(drawPie(c1, labels, ciroData, `[${filtStokKat}] Ciro Dağılımı` + dateSubtitle, ciroColors));
+                
+                let c2 = createChartCanvas('ch2', "w-full md:w-[31%] h-[260px] bg-white border border-slate-100 p-2 rounded-xl");
+                chartInstances.push(drawPie(c2, labels, maliyetData, `[${filtStokKat}] Maliyet Dağılımı` + dateSubtitle, maliyetColors));
+                
+                let c3 = createChartCanvas('ch3', "w-full md:w-[31%] h-[260px] bg-white border border-slate-100 p-2 rounded-xl");
+                chartInstances.push(drawPie(c3, labels, karData, `[${filtStokKat}] Uzman Kar Dağılımı` + dateSubtitle, karColors));
+
+            } else if (filtHizmet !== "ALL") {
+                // 🛑 SENARYO 2: SADECE HİZMET KATEGORİSİ -> 2 PASTA
+                const labels = Object.keys(uzmanStats).filter(u => uzmanStats[u].ciro > 0);
+                const ciroData = labels.map(u => uzmanStats[u].ciro);
+                
+                let otherCiro = 0;
+                rawPaketler.forEach(p => {
+                    const h = String(p.hizmetPaketTercihi || p.hizmettercihi || p.hizmetTercihi || Object.values(p)[3] || Object.values(p)[4]).trim();
+                    let pDate = p.paketTarihi || p.pakettarihi || p.kayitTarihi || Object.values(p)[11] || Object.values(p)[1];
+                    if (!isDateInRange(pDate, startDateObj, endDateObj)) return;
+
+                    const ciro = safeFloat(p.hizmetAraOdeme || p.odenenmiktar || Object.values(p)[7]);
+                    if (h !== filtHizmet) otherCiro += ciro;
+                });
+                rawSeanslar.forEach(s => {
+                    let sDate = s.islemTarihi || s.islemtarihi || s.tarih || Object.values(s)[1];
+                    if (!isDateInRange(sDate, startDateObj, endDateObj)) return;
+
+                    const ciro = safeFloat(s.ciro || Object.values(s)[6]);
+                    otherCiro += ciro;
+                });
+                
+                let c1 = createChartCanvas('ch1', "w-full md:w-[45%] h-[300px] bg-white border border-slate-100 p-3 rounded-xl");
+                chartInstances.push(drawPie(c1, labels, ciroData, `[${filtHizmet}] Uzman Ciro Dağılımı` + dateSubtitle, ciroColors));
+                
+                let c2 = createChartCanvas('ch2', "w-full md:w-[45%] h-[300px] bg-white border border-slate-100 p-3 rounded-xl");
+                chartInstances.push(drawPie(c2, [filtHizmet, 'Diğer Tüm Kazançlar'], [globalCiro, otherCiro], `Genel Ciro İçindeki Payı` + dateSubtitle, ['#f59e0b', '#cbd5e1']));
+
+            } else {
+                // 🛑 SENARYO 3: İLK EKRAN VEYA GENEL GÖRÜNÜM -> 1 İÇ İÇE PASTA
+                const labels = Object.keys(uzmanStats).filter(u => uzmanStats[u].ciro > 0 || uzmanStats[u].maliyet > 0);
+                const ciroData = labels.map(u => uzmanStats[u].ciro);
+                const maliyetData = labels.map(u => uzmanStats[u].maliyet);
+                
+                let titleStr = "Salonun Genel Performans Toplamı" + dateSubtitle;
+                
+                let c1 = createChartCanvas('ch1', "w-full h-[350px] bg-white border border-slate-100 p-4 rounded-xl");
+                chartInstances.push(drawNestedPie(c1, labels, ciroData, maliyetData, titleStr));
+            }
+        }
+
+        // STANDART PASTA GRAFİĞİ
+        function drawPie(canvas, labels, data, title, colors) {
+            return new Chart(canvas.getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: ['Sarf Malzeme Maliyeti (₺)', 'Net Stüdyo Kârı (₺)'],
+                    labels: labels.length > 0 ? labels : ["Veri Yok"],
                     datasets: [{
-                        data: [parseFloat(cost.toFixed(2)), parseFloat(chartProfitValue.toFixed(2))],
-                        backgroundColor: ['#ef4444', '#10b981'],
+                        data: data.length > 0 ? data : [1],
+                        backgroundColor: data.length > 0 ? colors : ['#e2e8f0'],
+                        borderColor: '#ffffff',
                         borderWidth: 2
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { font: { family: 'Segoe UI', size: 12 } }
+                        legend: { position: 'bottom', labels: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 10 } } },
+                        title: { display: true, text: title, font: {family: "'Plus Jakarta Sans', sans-serif", size: 12} },
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(c) { 
+                                    if(data.length === 0) return "Veri Yok";
+                                    return new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY'}).format(c.parsed); 
+                                } 
+                            } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // İÇ İÇE PASTA GRAFİĞİ (GENEL DURUM)
+        function drawNestedPie(canvas, labels, ciroData, maliyetData, title) {
+            const modernColors = ['#14b8a6', '#f43f5e', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#10b981'];
+            return new Chart(canvas.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: labels.length > 0 ? labels : ["Veri Yok"],
+                    datasets: [
+                        { label: 'Üretilen Ciro', data: ciroData.length > 0 ? ciroData : [1], backgroundColor: ciroData.length > 0 ? modernColors : ['#e2e8f0'], borderColor: '#fff', borderWidth: 2 },
+                        { label: 'Kullanılan Maliyet', data: maliyetData.length > 0 ? maliyetData : [0], backgroundColor: maliyetData.length > 0 ? modernColors.map(c=>c+'99') : ['#e2e8f0'], borderColor: '#fff', borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } } },
+                        title: { display: true, text: title + ' (Dış Halka: Ciro | İç Halka: Maliyet)', font: {family: "'Plus Jakarta Sans', sans-serif", size: 13}, padding: { bottom: 15 } },
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(c) { 
+                                    if(ciroData.length === 0) return "Veri Yok";
+                                    return c.dataset.label + ': ' + new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY'}).format(c.parsed); 
+                                } 
+                            } 
                         }
                     }
                 }
