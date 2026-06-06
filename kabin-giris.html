@@ -70,7 +70,12 @@
         .finans-skor-kart span { color: #00a8b5; }
         
         .btn-seansi-bitir { background-color: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; gap: 8px; }
-        .btn-tablo-sil { background-color: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+
+        /* 📋 Arşiv Tablosu Düzenle & Sil Butonları */
+        .btn-arsiv-duzenle { background-color: #fef3c7; color: #d97706; border: 1px solid #fde68a; padding: 5px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.75rem; font-family: 'Segoe UI', sans-serif; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-arsiv-duzenle:hover { background-color: #d97706; color: white; }
+        .btn-arsiv-sil { background-color: #fee2e2; color: #ef4444; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.75rem; font-family: 'Segoe UI', sans-serif; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-arsiv-sil:hover { background-color: #ef4444; color: white; }
 
         .mor-arsiv-sorgu-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 15px; margin-bottom: 25px; font-family: 'Segoe UI', sans-serif; width: 100%; }
         .arsiv-sorgu-sol { display: flex; align-items: center; gap: 12px; }
@@ -115,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="sarfUrunPaneli">
                 <div class="card-title">🧴 Kullanılan Sarf Ürün ve Miktar</div>
                 <div class="form-group">
                     <label>Tüketilen Ürün Grubu (Kategori)</label>
@@ -161,7 +166,7 @@
                             <th>Alınan Gelir (Ciro)</th>
                             <th>Ürün Maliyeti (Masraf)</th>
                             <th>Net Kâr</th>
-                            <th style="text-align:center;">Kaldır</th>
+                            <th style="text-align:center;">İşlem</th>
                         </tr>
                     </thead>
                     <tbody id="sepetGövde">
@@ -190,7 +195,7 @@
                             <th>Kullanılan Ürün</th>
                             <th>Alınan Gelir (Ciro)</th>
                             <th>Masraf (Maliyet)</th>
-                            <th style="text-align:center;">Durum</th>
+                            <th style="text-align:center; min-width: 250px;">Durum / İşlemler</th>
                         </tr>
                     </thead>
                     <tbody id="arsivGövde"></tbody>
@@ -215,6 +220,11 @@
         let secilenDanisan = ""; let gonderimKuyrugu = []; let mevcutIslemIndeksi = 0;
 
         document.addEventListener("DOMContentLoaded", () => {
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return;
+            }
             const bugun = new Date();
             const yyyy = bugun.getFullYear();
             const mm = String(bugun.getMonth() + 1).padStart(2, '0');
@@ -237,10 +247,9 @@
             }
             globalKategoriler = ham; kategoriKutusunuDoldur();
         };
-        window.paralokStokGeri = function(res) { globalStoklar = Array.isArray(res) ? res : []; };
         window.paralelStokGeri = function(res) { globalStoklar = Array.isArray(res) ? res : []; };
         window.paralelDanisanGeri = function(res) { globalDanisanlar = Array.isArray(res) ? res : []; danisanAra(document.getElementById('danisanInput').value || ""); };
-        window.paralelSeansGeri = function(res) { globalSeansGecmisi = Array.isArray(res) ? res : []; if(secilenDanisan) arsivEkrandaFiltrele(); };
+        window.paralelSeansGeri = function(res) { globalSeansGecmisi = Array.isArray(res) ? res : []; if(secilenDanisan) { arsivEkrandaFiltrele(); } };
         window.paralelUzmanGeri = function(res) {
             let ham = Array.isArray(res) ? res : [];
             if(ham.length>0 && String(ham[0].adSoyad).toLowerCase().replace(/\s/g,"")==="adsoyad") ham.shift();
@@ -264,12 +273,13 @@
             });
         }
 
-        function kategoriDegisti(kat) {
+        function kategoriDegisti(kat, secilecekUrun = "") {
             const s = document.getElementById('urunDetay'); s.innerHTML = '<option value="">-- Ürün Seçin --</option>';
             if(!kat) return;
             globalStoklar.filter(x => x.kategori && String(x.kategori).trim().toLowerCase() === String(kat).trim().toLowerCase()).forEach(p => {
                 const opt = document.createElement('option'); opt.value = p.urunAdi; opt.textContent = `${p.urunAdi} (Kalan: ${p.kalanHacim} ${p.birim || 'ml'})`; s.appendChild(opt);
             });
+            if(secilecekUrun) { s.value = secilecekUrun; }
         }
 
         function danisanAra(val) {
@@ -424,7 +434,18 @@
             tbody.innerHTML = "";
             aktifSepet.forEach((item, index) => {
                 tg += item.gelir; tm += item.masraf; tk += item.kar;
-                tbody.innerHTML += `<tr><td><strong>${item.urunadi}</strong></td><td>${item.kategori}</td><td>${item.miktar} ml/Adet</td><td style="color:#00a8b5; font-weight:600;">₺${item.gelir.toFixed(2)}</td><td style="color:#ef4444; font-weight:600;">₺${item.masraf.toFixed(2)}</td><td style="color:#10b981; font-weight:600;">₺${item.kar.toFixed(2)}</td><td style="text-align:center;"><button class="btn-tablo-sil" onclick="sepettenCikar(${index})">❌</button></td></tr>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.urunadi}</strong></td>
+                        <td>${item.kategori}</td>
+                        <td>${item.miktar} ml/Adet</td>
+                        <td style="color:#00a8b5; font-weight:600;">₺${item.gelir.toFixed(2)}</td>
+                        <td style="color:#ef4444; font-weight:600;">₺${item.masraf.toFixed(2)}</td>
+                        <td style="color:#10b981; font-weight:600;">₺${item.kar.toFixed(2)}</td>
+                        <td style="text-align:center;">
+                            <button style="background:#fee2e2; color:#ef4444; border:1px solid #fecaca; padding:4px 8px; border-radius:6px; cursor:pointer;" onclick="sepettenCikar(${index})">❌ Kaldır</button>
+                        </td>
+                    </tr>`;
             });
             document.getElementById('toplamGelirYazi').textContent = tg.toFixed(2); document.getElementById('toplamMasrafYazi').textContent = tm.toFixed(2); document.getElementById('toplamKarYazi').textContent = tk.toFixed(2);
         }
@@ -439,16 +460,14 @@
             kuyrukElemaniGonder();
         }
 
-        // 🎯 PC EKRAN SAATİNİ TÜM PARAMETRELERLE SUNUCUYA ENJEKTE EDEN GARANTİ MOTOR
         function kuyrukElemaniGonder() {
             if (mevcutIslemIndeksi >= gonderimKuyrugu.length) {
-                alert("✅ Seans Başarıyla Kaydedildi ve Stoklar Güncellendi!");
+                alert("✅ Seans Başarıyla Kaydedildi ve Finansal Tablolar Güncellendi!");
                 aktifSepet = []; sepetiCiz(); paralelVeriYukle(); return;
             }
             const uz = document.getElementById('uzmanSecim').value;
             const el = gonderimKuyrugu[mevcutIslemIndeksi];
 
-            // Saf JavaScript ile bilgisayarınızın o anki ekran saatini kesin olarak yakalıyoruz.
             const pcZamani = new Date();
             const yyyy = pcZamani.getFullYear();
             const mm = String(pcZamani.getMonth() + 1).padStart(2, '0');
@@ -457,15 +476,9 @@
             const min = String(pcZamani.getMinutes()).padStart(2, '0');
             const ss = String(pcZamani.getSeconds()).padStart(2, '0');
 
-            // Farklı backend versiyonları için olası tüm varyasyon formatları hazırlandı:
             const formatStandart = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-            const formatTR = `${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
 
             const script = document.createElement('script');
-            
-            // Arka plandaki Google Script'in sunucu saatini kullanmasını engellemek için, 
-            // gelebilecek tüm anahtar tarih parametrelerini (islemTarihi, tarih, seansTarihi vb.) ve
-            // her bir zaman parçasını (yil, ay, gun, saat) ayrı ayrı url'e ekleyerek motoru bilgisayar saatine mecbur bırakıyoruz.
             script.src = `${API_URL}?action=addseans` +
                          `&uzmanAdSoyad=${encodeURIComponent(uz)}` +
                          `&danisanAdSoyad=${encodeURIComponent(secilenDanisan)}` +
@@ -475,11 +488,6 @@
                          `&gelir=${el.gelir}` +
                          `&masraf=${el.masraf}` +
                          `&islemTarihi=${encodeURIComponent(formatStandart)}` +
-                         `&tarih=${encodeURIComponent(formatStandart)}` +
-                         `&seansTarihi=${encodeURIComponent(formatStandart)}` +
-                         `&islemTarihiSaat=${encodeURIComponent(formatStandart)}` +
-                         `&tarihTR=${encodeURIComponent(formatTR)}` +
-                         `&pcYil=${yyyy}&pcAy=${mm}&pcGun=${dd}&pcSaat=${hh}&pcDakika=${min}&pcSaniye=${ss}` +
                          `&callback=kuyrukSonucAl`;
                          
             document.body.appendChild(script);
@@ -570,6 +578,8 @@
                 arsivCiroSum += ciroTutari;
                 arsivMasrafSum += masrafTutari;
 
+                let mutlakIndeks = globalSeansGecmisi.indexOf(k);
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${tamTarihSaat}</td>
@@ -577,7 +587,13 @@
                         <td><strong>${urunIsmi}</strong></td>
                         <td style="color:#00a8b5; font-weight:600;">₺${ciroTutari.toFixed(2)}</td>
                         <td style="color:#ef4444; font-weight:600;">₺${masrafTutari.toFixed(2)}</td>
-                        <td style="text-align:center;"><span style="color:#10b981; font-size:0.85rem;"><i class="fas fa-cloud"></i> Bulutta Kayıtlı</span></td>
+                        <td>
+                            <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                                <span style="color:#10b981; font-size:0.85rem; white-space: nowrap;"><i class="fas fa-cloud"></i> Bulutta Kayıtlı</span>
+                                <button class="btn-arsiv-duzenle" onclick="arsivdenDuzenle(${mutlakIndeks})"><i class="fas fa-edit"></i> ✏️ Düzenle</button>
+                                <button class="btn-arsiv-sil" onclick="arsivdenSil(${mutlakIndeks})"><i class="fas fa-trash-alt"></i> 🗑️ Sil</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -587,6 +603,84 @@
             document.getElementById('arsivToplamMasrafYazi').textContent = arsivMasrafSum.toFixed(2);
             document.getElementById('arsivToplamKarYazi').textContent = arsivKarSum.toFixed(2);
         }
+
+        function arsivdenDuzenle(idx) {
+            const hedefKayit = globalSeansGecmisi[idx];
+            if (!hedefKayit) return;
+
+            let kat = hedefKayit.islemTipi || hedefKayit.kategori || '';
+            let urun = hedefKayit.urunAdi || hedefKayit.urunadi || hedefKayit.urun || '';
+            let miktar = hedefKayit.tuketimMiktari || hedefKayit.miktar || '';
+            let ciro = hedefKayit.gelir !== undefined ? hedefKayit.gelir : (hedefKayit.ciro !== undefined ? hedefKayit.ciro : 0);
+
+            document.getElementById('urunKategori').value = kat;
+            kategoriDegisti(kat, urun);
+            document.getElementById('tuketilenMiktar').value = miktar;
+            document.getElementById('alunanUcret').value = ciro;
+
+            document.getElementById('sarfUrunPaneli').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* 🗑️ AKILLI ID TARAYICILI VE ÇİFT GÜVENCELİ ARŞİV SİLME MOTORU */
+        function arsivdenSil(idx) {
+            const hedefKayit = globalSeansGecmisi[idx];
+            if (!hedefKayit) return;
+
+            let urunIsmi = hedefKayit.urunAdi || hedefKayit.urunadi || hedefKayit.urun || '';
+            let tamTarihSaat = hedefKayit.islemTarihi || hedefKayit.tarih || hedefKayit.islemTarihiSaat || '';
+            let danisan = hedefKayit.danisanAdi || hedefKayit.danisanAdSoyad || secilenDanisan;
+            let uzmanIsmi = hedefKayit.uzman || hedefKayit.uzmanAdSoyad || hedefKayit.uzmanadsoyad || '';
+            let islemTipi = hedefKayit.islemTipi || hedefKayit.kategori || '';
+            let tuketimMiktari = hedefKayit.tuketimMiktari || hedefKayit.miktar || 0;
+            let gelir = hedefKayit.gelir || hedefKayit.ciro || 0;
+            let masraf = hedefKayit.masraf || hedefKayit.maliyet || 0;
+
+            // 🎯 Akıllı ID Yakalama Algoritması: D-0028 gibi verileri barındıran sütun ismini dinamik olarak keşfeder.
+            let dbId = hedefKayit.id || hedefKayit.seansid || hedefKayit.seansId || hedefKayit.islemid || hedefKayit.islemId || hedefKayit.no || hedefKayit.islemNo || '';
+            if (!dbId) {
+                for (let key in hedefKayit) {
+                    if (key.toLowerCase().includes('id') || key.toLowerCase() === 'no' || key.toLowerCase().includes('no') || key.toLowerCase().includes('islem')) {
+                        dbId = hedefKayit[key];
+                        break; // Eşleşen ilk ID hücresini kapar (Örn: D-0028)
+                    }
+                }
+            }
+
+            if(confirm(`"${urunIsmi}" işlemine ait arşiv kaydını buluttan kalıcı olarak silmek istediğinize emin misiniz?`)) {
+                const script = document.createElement('script');
+                
+                // Arka plandaki Google Script'e olası tüm parametre varyasyonlarını besleyerek hata şansını sıfıra indiriyoruz.
+                script.src = `${API_URL}?action=silseans` +
+                             `&id=${encodeURIComponent(dbId)}` +
+                             `&seansid=${encodeURIComponent(dbId)}` +
+                             `&seansId=${encodeURIComponent(dbId)}` +
+                             `&islemId=${encodeURIComponent(dbId)}` +
+                             `&islemid=${encodeURIComponent(dbId)}` +
+                             `&no=${encodeURIComponent(dbId)}` +
+                             `&uzmanAdSoyad=${encodeURIComponent(uzmanIsmi)}` +
+                             `&danisanAdSoyad=${encodeURIComponent(danisan)}` +
+                             `&danisanAdiSoyadi=${encodeURIComponent(danisan)}` +
+                             `&islemTipi=${encodeURIComponent(islemTipi)}` +
+                             `&urunAdi=${encodeURIComponent(urunIsmi)}` +
+                             `&urunadi=${encodeURIComponent(urunIsmi)}` +
+                             `&tuketimMiktari=${tuketimMiktari}` +
+                             `&gelir=${gelir}` +
+                             `&masraf=${masraf}` +
+                             `&islemTarihi=${encodeURIComponent(tamTarihSaat)}` +
+                             `&tarih=${encodeURIComponent(tamTarihSaat)}` +
+                             `&callback=arsivdenSilSonuc`;
+                document.body.appendChild(script);
+            }
+        }
+
+        window.arsivdenSilSonuc = function(res) {
+            if (res && res.status === "error") {
+                alert("❌ Buluttan silme işlemi başarısız oldu: " + (res.message || "Erişim hatası"));
+            } else {
+                alert("🗑️ Seans kaydı arşivden (buluttan) başarıyla silindi.");
+            }
+            arsivVerisiniYenile();
+        };
     </script>
 </body>
 </html>
