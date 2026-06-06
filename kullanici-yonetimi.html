@@ -125,6 +125,24 @@
         let yerelKullanicilarHafizasi = [];
 
         document.addEventListener("DOMContentLoaded", function() {
+            // --- 1. VIP GÜVENLİK KONTROLÜ ---
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            
+            // Eğer hiç giriş yapılmamışsa ana kapıya (index.html) gönder
+            if (!aktifKullanici) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // 2. Rol kontrolü: Sadece Admin ve Müdür girebilir
+            let rol = String(aktifKullanici.rol).toLowerCase().trim();
+            if (!rol.includes("admin") && !rol.includes("müdür")) {
+                alert("Yetkisiz Erişim: Bu sayfayı görüntüleme yetkiniz bulunmamaktadır!");
+                window.location.href = "dashboard.html"; // Standart yetkili odaya geri postala
+                return; // Burası çok önemli: Yetki yoksa alttaki verileri çekme kodunu durdurur
+            }
+
+            // --- Güvenlikten geçildi, normal işlemlere (verileri çekmeye) devam ---
             canliPersonelListesiniCek();
         });
 
