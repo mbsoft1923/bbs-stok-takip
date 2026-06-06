@@ -3,222 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahar Beauty Studio - Yönetim Paneli</title>
+    <title>Bahar Beauty Studio - Ana Yönetim Paneli</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #f0f4f8; padding: 30px 20px; font-family: 'Playfair Display', serif; }
-        .wrapper { max-width: 1200px; margin: 0 auto; width: 100%; }
-        
-        /* 💎 KURUMSAL ÜST BAR STİLLERİ */
-        .global-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background-color: white; padding: 15px 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 6px solid #00a8b5; width: 100%; }
-        .global-header-title-area { display: flex; flex-direction: column; }
-        .global-header-brand { font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #00a8b5; line-height: 1.1; margin-bottom: 2px; }
-        .global-header-sub { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
-        .global-btn-back { font-family: 'Segoe UI', sans-serif; background-color: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 10px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; transition: all 0.25s; font-size: 0.9rem; }
-        .global-btn-back:hover { background-color: #ef4444; color: white; transform: translateX(-3px); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15); }
+        body { background-color: #f4f7fc; font-family: 'Plus Jakarta Sans', sans-serif; padding: 30px 50px; color: #1e293b; }
+        .container { max-width: 1440px; margin: 0 auto; }
 
-        /* KUTU MENÜ GRID */
-        .menu-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 25px; width: 100%; }
-        @media (max-width: 1000px) { .menu-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px) { .menu-grid { grid-template-columns: repeat(2, 1fr); } }
-
-        .menu-box {
-            background: white; border-radius: 12px; padding: 22px 10px; text-align: center; text-decoration: none;
-            color: #334155; font-weight: 700; font-size: 0.92rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            border-bottom: 4px solid #cbd5e1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: all 0.25s ease;
+        /* Üst Header Alanı */
+        .header-bar {
+            background: white; border-radius: 24px; padding: 20px 45px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02); border-left: 6px solid #00a8b5;
+            margin-bottom: 35px;
         }
-        .menu-box i { font-size: 2rem; transition: transform 0.25s ease; }
-        .menu-box:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 168, 181, 0.15); color: #00a8b5; border-bottom-color: #00a8b5; }
-        .menu-box:hover i { transform: scale(1.15); }
+        .brand-logo { font-family: 'Great Vibes', cursive; font-size: 3.2rem; color: #00a8b5; line-height: 1; }
+        .brand-sub { font-family: 'Playfair Display', serif; font-size: 1rem; color: #64748b; margin-top: 5px; font-weight: 600; }
+        .btn-logout {
+            background: #fff1f2; color: #ef4444; border: 1px solid #fca5a5;
+            padding: 12px 24px; border-radius: 14px; font-weight: 700; font-size: 0.85rem;
+            text-decoration: none; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #ef4444; color: white; }
 
-        /* SİMETRİK İKİLİ PANEL */
-        .dashboard-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 25px; width: 100%; }
-        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        /* Menü Düzeni ve Simgeler */
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; margin-bottom: 35px;
+        }
+        .menu-card {
+            background: white; border-radius: 20px; padding: 30px 10px;
+            text-align: center; text-decoration: none; color: #2d3748;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.02); border: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 14px; transition: all 0.2s ease;
+        }
+        .menu-card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,168,181,0.1); border-color: #00a8b5; }
+        .menu-card .icon { font-size: 2.2rem; line-height: 1; display: block; }
+        .menu-card span { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 900; color: #1a202c; }
 
-        .card { background-color: white; border-radius: 14px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); width: 100%; }
-        .card-header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
-        .card-title { font-size: 1.15rem; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        /* Alt İki Kolonlu Yapı */
+        .dashboard-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; }
 
-        /* LOG SİSTEMİ */
-        .log-container { max-height: 295px; overflow-y: auto; padding-right: 5px; }
-        .log-item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-radius: 8px; margin-bottom: 10px; background-color: #f8fafc; font-size: 0.88rem; border-left: 4px solid #cbd5e1; }
-        .badge-status { padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; flex-shrink: 0; }
-        .badge-success { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .badge-failed { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .log-time { color: #64748b; font-weight: 600; font-family: monospace; }
-        .log-text { color: #334155; line-height: 1.4; }
-        .btn-action-clear { background: none; border: none; color: #ef4444; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+        .panel-card {
+            background: white; border-radius: 24px; padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #e2e8f0;
+        }
+        .panel-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .panel-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; display: flex; align-items: center; gap: 10px; color: #1a202c; }
+        .panel-title .shield-icon { color: #3182ce; font-size: 1.3rem; }
+        .btn-clear { background: none; border: none; color: #ef4444; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 
-        /* PROFİL KARTI */
-        .profile-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .profile-avatar { width: 75px; height: 75px; background: linear-gradient(135deg, #00a8b5, #00d2c4); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 15px; }
-        .profile-name { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
-        .profile-badge { background-color: #e0f7fa; color: #006064; padding: 4px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 25px; }
-        .profile-info-list { width: 100%; border-top: 1px dashed #e2e8f0; padding-top: 15px; margin-bottom: 10px; }
-        .profile-info-item { display: flex; justify-content: space-between; padding: 10px 4px; font-size: 0.9rem; border-bottom: 1px solid #f8fafc; }
-        .profile-info-item span:first-child { color: #64748b; font-weight: 500; }
-        .profile-info-item span:last-child { color: #1e293b; font-weight: 600; }
+        /* Log Listesi Konteyneri */
+        .log-stream { height: 340px; overflow-y: auto; padding-right: 5px; }
+        .log-item {
+            background: #fff; border: 1px solid #edf2f7; border-left: 4px solid #48bb78;
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 15px; font-size: 0.85rem; color: #4a5568;
+        }
+        .log-item.failed { border-left-color: #f56565; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; font-family: monospace; }
+        .badge-success { background: #e6fffa; color: #234e52; border: 1px solid #b2f5ea; }
+        .badge-failed { background: #fff5f5; color: #742a2a; border: 1px solid #fed7d7; }
+        .log-time { color: #718096; font-family: monospace; }
+        .log-text strong { color: #1a202c; }
 
-        .secure-hidden { display: none !important; }
+        /* Aktif Personel Kartı Tasarımı */
+        .personnel-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 15px; }
+        .avatar-circle {
+            width: 85px; height: 85px; background: #00a8b5; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: bold; font-family: 'Playfair Display', serif; margin-bottom: 15px;
+        }
+        .personnel-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: #1a202c; margin-bottom: 6px; }
+        .personnel-role { background: #e6fffa; color: #00a8b5; padding: 4px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-bottom: 30px; letter-spacing: 0.5px; }
+        
+        .info-line {
+            width: 100%; display: flex; justify-content: space-between; padding: 14px 0;
+            border-top: 1px dashed #edf2f7; font-size: 0.85rem;
+        }
+        .info-label { color: #718096; }
+        .info-value { font-weight: 600; color: #2d3748; }
+        .status-online { color: #38a169; font-weight: bold; display: flex; align-items: center; gap: 6px; }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="global-page-header">
-            <div class="global-header-title-area">
-                <span class="global-header-brand">Bahar Beauty Studio</span>
-                <span class="global-header-sub">| Ana Yönetim Paneli</span>
+    <div class="container">
+        <header class="header-bar">
+            <div class="brand-area">
+                <span class="brand-logo">Bahar Beauty Studio</span>
+                <span class="brand-sub">| Ana Yönetim Paneli</span>
             </div>
-            <a href="index.html" class="global-btn-back" onclick="localStorage.removeItem('aktifKullanici');">🚪 Güvenli Çıkış</a>
-        </div>
+            <a href="index.html" class="btn-logout">🔒 Güvenli Çıkış</a>
+        </header>
 
-        <div class="menu-grid">
-            <a href="kabin-giris.html" class="menu-box"><i>💆</i><span>Kabin Tüketim</span></a>
-            <a href="urun-giris.html" class="menu-box"><i>📦</i><span>Ürün/Çeşit Girişi</span></a>
-            <a href="stok-kontrol.html" class="menu-box"><i>📊</i><span>Stok Kontrol</span></a>
-            <a href="kullanici-yonetimi.html" id="mKullanici" class="menu-box secure-hidden"><i>👥</i><span>Personel Yetki</span></a>
-            <a href="maliyetKarAnalizi.html" id="mMaliyet" class="menu-box secure-hidden"><i>💰</i><span>Maliyet & Kâr</span></a>
-            <a href="raporlar.html" id="mRapor" class="menu-box secure-hidden"><i>🔒</i><span>Raporlar</span></a>
-        </div>
+        <section class="menu-grid">
+            <a href="hizmet-paket-giris.html" class="menu-card" style="background: #f0fdfa; border-color: #00a8b5;">
+                <span class="icon">💼</span>
+                <span style="color: #00a8b5;">Hizmet & Paket</span>
+            </a>
+            <a href="kabin-giris.html" class="menu-card">
+                <span class="icon">💆‍♀️</span>
+                <span>Kabin Tüketim</span>
+            </a>
+            <a href="urun-giris.html" class="menu-card">
+                <span class="icon">📦</span>
+                <span>Ürün/Çeşit Girişi</span>
+            </a>
+            <a href="stok-kontrol.html" class="menu-card">
+                <span class="icon">📊</span>
+                <span>Stok Kontrol</span>
+            </a>
+            <a href="kullanici-yonetimi.html" class="menu-card">
+                <span class="icon">👥</span>
+                <span>Personel Yetki</span>
+            </a>
+            <a href="maliyetKarAnalizi.html" class="menu-card">
+                <span class="icon">💰</span>
+                <span>Maliyet & Kâr</span>
+            </a>
+            <a href="raporlar.html" class="menu-card">
+                <span class="icon">🔒</span>
+                <span> Gider & Performans</span>
+                <span> Analizi</span>
+            </a>
+        </section>
 
-        <div class="dashboard-grid">
-            <div class="card">
-                <div class="card-header-area">
-                    <div class="card-title">🛡️ Güvenlik & Sistem Log Kayıtları</div>
-                    <button class="btn-action-clear" onclick="clearLogs()">Geçmişi Temizle</button>
+        <div class="dashboard-row">
+            <div class="panel-card">
+                <div class="panel-title-bar">
+                    <div class="panel-title"><span class="shield-icon">🛡️</span> Güvenlik & Sistem Giriş Logları</div>
+                    <button class="btn-clear" onclick="clearSystemLogs()">Geçmişi Temizle</button>
                 </div>
-                <div class="log-container" id="logList"></div>
+                <div class="log-stream" id="logContainer">
+                    <p style="text-align:center; color:#a0aec0; padding:40px;">Bulut verileri senkronize ediliyor...</p>
+                </div>
             </div>
-            
-            <div class="card">
-                <div class="card-header-area">
-                    <div class="card-title">🔑 Aktif Personel Bilgileri</div>
-                </div>
-                <div class="profile-container">
-                    <div class="profile-avatar" id="userInitial">B</div>
-                    <div class="profile-name" id="userName">Yükleniyor...</div>
-                    <div class="profile-badge" id="userRole">KONTROL</div>
+
+            <div class="panel-card">
+                <div class="panel-title">🔑 Aktif Personel Bilgileri</div>
+                <div class="personnel-wrapper">
+                    <div class="avatar-circle">S</div>
+                    <div class="personnel-name">Sistem Kurucusu</div>
+                    <div class="personnel-role">ADMIN</div>
                     
-                    <div class="profile-info-list">
-                        <div class="profile-info-item"><span>Sistem E-Posta:</span><span id="userEmail">-</span></div>
-                        <div class="profile-info-item"><span>Stüdyo Yetkisi:</span><span id="userAccessText">Hesaplanıyor...</span></div>
-                        <div class="profile-info-item"><span>Giriş Durumu:</span><span style="color:#10b981;">● Aktif Çevrimiçi</span></div>
+                    <div class="info-line">
+                        <span class="info-label">Sistem E-Posta:</span>
+                        <span class="info-value">admin</span>
+                    </div>
+                    <div class="info-line">
+                        <span class="info-label">Stüdyo Yetkisi:</span>
+                        <span class="info-value">Tam Yetkili Yönetim</span>
+                    </div>
+                    <div class="info-line">
+                        <span class="info-label">Giriş Durumu:</span>
+                        <span class="status-online">● Aktif Çevrimiçi</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
-        
+<script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
+
         document.addEventListener("DOMContentLoaded", function() {
-            if (!localStorage.getItem('aktifKullanici')) {
-                window.location.href = "index.html";
+            // --- 1. GÜVENLİK KONTROLÜ ---
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            
+            // Bilet yoksa dışarı at
+            if (!aktifKullanici) {
+                window.location.href = "index.html"; 
+                return; 
+            }
+
+            // --- 2. ROL KONTROLÜ VE BUTON GİZLEME (YENİ EKLENEN KISIM) ---
+            let rol = String(aktifKullanici.rol).toLowerCase();
+            let yetkiliMi = rol.includes('admin') || rol.includes('müdür');
+
+            if (!yetkiliMi) {
+                // Kullanıcı Admin veya Müdür DEĞİLSE (örneğin Uzmansa), o 3 menüyü gizle
+                let yetkiBtn = document.querySelector('a[href="kullanici-yonetimi.html"]');
+                let maliyetBtn = document.querySelector('a[href="maliyetKarAnalizi.html"]');
+                let raporBtn = document.querySelector('a[href="raporlar.html"]');
+                
+                if (yetkiBtn) yetkiBtn.style.display = 'none';
+                if (maliyetBtn) maliyetBtn.style.display = 'none';
+                if (raporBtn) raporBtn.style.display = 'none';
+                
+                // 7 buton yerine 4 buton kaldığı için, kalan butonların ekrana şık ve ortalı yayılması için ızgarayı (grid) düzeltelim:
+                let menuGrid = document.querySelector('.menu-grid');
+                if (menuGrid) {
+                    menuGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                    menuGrid.style.maxWidth = '900px'; 
+                    menuGrid.style.margin = '0 auto 35px auto';
+                }
+            }
+
+            // --- 3. DİNAMİK PERSONEL BİLGİLERİ DOLDURMA ---
+            document.querySelector('.personnel-name').innerText = aktifKullanici.adSoyad;
+            document.querySelector('.personnel-role').innerText = String(aktifKullanici.rol).toUpperCase();
+            
+            const emailFields = document.querySelectorAll('.info-value');
+            if(emailFields.length > 0) emailFields[0].innerText = aktifKullanici.eposta; 
+            if(emailFields.length > 1) emailFields[1].innerText = yetkiliMi ? 'Tam Yetkili Yönetim' : 'Standart Kullanıcı (Uzman)';
+            
+            // İsim baş harfini Avatar'a yazdır
+            let basHarf = String(aktifKullanici.adSoyad).charAt(0).toUpperCase();
+            document.querySelector('.avatar-circle').innerText = basHarf;
+
+            // --- 4. LOGLARI GETİR ---
+            fetchLogs();
+        });
+
+        function fetchLogs() {
+            const callbackName = "parseCloudLogs";
+            window[callbackName] = function(response) {
+                const container = document.getElementById('logContainer');
+                container.innerHTML = "";
+                
+                const logs = response.data || response;
+                
+                if(!logs || logs.length === 0) {
+                    container.innerHTML = "<p style='text-align:center;color:#a0aec0;padding:20px;'>Kayıt bulunamadı.</p>";
+                    return;
+                }
+                
+                // girisLoglari yapısına uyumlu alan eşitlemeleri
+                [...logs].reverse().forEach(log => {
+                    const statusStr = String(log.durum || log.Status || '').toUpperCase();
+                    const isSuccess = statusStr === "SUCCESS" || statusStr === "BAŞARILI";
+                    
+                    container.innerHTML += `
+                        <div class="log-item ${isSuccess ? '' : 'failed'}">
+                            <span class="badge ${isSuccess ? 'badge-success' : 'badge-failed'}">${isSuccess ? 'SUCCESS' : 'FAILED'}</span>
+                            <span class="log-time">[${log.tarihSaat || log.Timestamp || '-'}]</span>
+                            <span class="log-text">Kullanıcı <strong>"${log.kullaniciAdi || log.User || '-'}"</strong> ${log.aciklama || log.Action || '-'}</span>
+                        </div>
+                    `;
+                });
+                
+                const scrElement = document.getElementById(callbackName);
+                if(scrElement) scrElement.remove();
+            };
+
+            let script = document.createElement('script');
+            script.id = callbackName;
+            script.src = `${API_URL}?action=getlogs&callback=${callbackName}`;
+            document.body.appendChild(script);
+        }
+
+        function clearSystemLogs() {
+            // Sadece Admin log silsin güvenliği:
+            let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
+            let rol = String(aktifKullanici.rol).toLowerCase();
+            if(!rol.includes('admin')) {
+                alert("Sistem günlüklerini sadece Admin silebilir.");
                 return;
             }
 
-            const currentSession = JSON.parse(localStorage.getItem('aktifKullanici'));
-            
-            const userRoleStr = currentSession.rol || currentSession.role || '';
-            const cleanRole = userRoleStr.trim().toLowerCase();
-            const displayName = (currentSession.adSoyad || currentSession.name || 'Bilinmeyen Personel').trim();
-            const displayEmail = currentSession.eposta || currentSession.email || '-';
-
-            document.getElementById('userName').textContent = displayName;
-            document.getElementById('userRole').textContent = userRoleStr.toUpperCase() || 'UZMAN';
-            document.getElementById('userEmail').textContent = displayEmail;
-            document.getElementById('userInitial').textContent = displayName.charAt(0).toUpperCase();
-
-            const isYonetici = (cleanRole === "admin" || cleanRole === "müdür" || cleanRole === "mudur" || cleanRole === "yönetici" || cleanRole === "yonetici");
-
-            if (isYonetici) {
-                document.getElementById('userAccessText').textContent = "Tam Yetkili Yönetim";
-                document.getElementById('mKullanici').classList.remove('secure-hidden');
-                document.getElementById('mMaliyet').classList.remove('secure-hidden');
-                document.getElementById('mRapor').classList.remove('secure-hidden');
-            } else {
-                document.getElementById('userAccessText').textContent = "Kısıtlı Uzman Yetkisi";
-                document.getElementById('mKullanici').classList.add('secure-hidden');
-                document.getElementById('mMaliyet').classList.add('secure-hidden');
-                document.getElementById('mRapor').classList.add('secure-hidden');
-            }
-
-            // Canlı log verilerini Google Sheet'ten çek
-            displayLogs();
-        });
-
-        // 🔄 BULUT VERİTABANINDAN LOGLARI ALAN VE ORİJİNAL LOG TASARIMINIZA BASAN GÜVENLİ MOTOR
-        function displayLogs() {
-            const logContainer = document.getElementById('logList');
-            logContainer.innerHTML = '<div style="color:#00a8b5; padding:15px; font-size:0.85rem; text-align:center;">Canlı bulut veritabanından log akışı yükleniyor...</div>';
-
-            const cbName = "logs_cb_" + Math.floor(Math.random() * 1000000);
-            
-            window[cbName] = function(res) {
-                logContainer.innerHTML = '';
-                
-                if(res && res.length > 0) {
-                    // En yeni logları üstte listelemek için kronolojik ters çevirme
-                    [...res].reverse().forEach(log => {
-                        const item = document.createElement('div');
-                        item.className = 'log-item';
-                        
-                        const tarihStr = log.tarihSaat || '---';
-                        const epostaStr = log.kullaniciAdi || 'Bilinmeyen';
-                        const durumStr = String(log.durum).toUpperCase();
-
-                        if(durumStr === "BAŞARILI") {
-                            item.style.borderLeftColor = '#10b981';
-                            item.innerHTML = `<span class="badge-status badge-success">SUCCESS</span><span class="log-time">[${tarihStr}]</span><div class="log-text">Kullanıcı <strong>"${epostaStr}"</strong> sisteme başarıyla giriş yaptı.</div>`;
-                        } else {
-                            item.style.borderLeftColor = '#ef4444';
-                            item.innerHTML = `<span class="badge-status badge-failed">FAILED</span><span class="log-time">[${tarihStr}]</span><div class="log-text"><strong>"${epostaStr}"</strong> adresiyle hatalı şifre denemesi yapıldı.</div>`;
-                        }
-                        logContainer.appendChild(item);
-                    });
-                } else {
-                    logContainer.innerHTML = '<div style="color:#888; padding:20px; text-align:center;">Kayıt bulunmuyor.</div>';
+            if(!confirm("Sistem günlük verilerini temizlemek istediğinize emin misiniz?")) return;
+            const cb = "clearLogsCallback";
+            window[cb] = function(res) {
+                if(res.status === "success" || res.result === "success") {
+                    alert("Sistem günlükleri başarıyla sıfırlandı.");
+                    fetchLogs();
                 }
-                
-                const scriptNode = document.getElementById(cbName);
-                if (scriptNode) scriptNode.remove();
+                const scrElement = document.getElementById(cb);
+                if(scrElement) scrElement.remove();
             };
-
-            let scriptEkle = document.createElement('script');
-            scriptEkle.id = cbName;
-            scriptEkle.src = `${SHEET_WEB_APP_URL}?action=getlogs&callback=${cbName}`;
-            document.body.appendChild(scriptEkle);
-        }
-
-        // 🗑️ BULUTTAKİ LOG GEÇMİŞİNİ SIFIRLAYIP CANLI EKRANI GÜNCELLEYEN MOTOR
-        function clearLogs() {
-            if(confirm("Tüm log geçmişini silmek istediğinize emin misiniz?")) {
-                const logContainer = document.getElementById('logList');
-                logContainer.innerHTML = '<div style="color:#ef4444; padding:15px; font-size:0.85rem; text-align:center;">Buluttaki loglar temizleniyor...</div>';
-
-                const cbName = "clear_cb_" + Math.floor(Math.random() * 1000000);
-                
-                window[cbName] = function(res) {
-                    if(res && res.status === "success") {
-                        displayLogs();
-                    } else {
-                        alert("Loglar temizlenirken bulutta bir hata oluştu.");
-                        displayLogs();
-                    }
-                    const scriptNode = document.getElementById(cbName);
-                    if (scriptNode) scriptNode.remove();
-                };
-
-                let scriptEkle = document.createElement('script');
-                scriptEkle.id = cbName;
-                scriptEkle.src = `${SHEET_WEB_APP_URL}?action=clearlogs&callback=${cbName}`;
-                document.body.appendChild(scriptEkle);
-            }
+            let script = document.createElement('script');
+            script.id = cb;
+            script.src = `${API_URL}?action=clearlogs&callback=${cb}`;
+            document.body.appendChild(script);
         }
     </script>
 </body>
