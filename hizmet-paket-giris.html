@@ -229,11 +229,8 @@
                     <div class="card-title">
                         <span><i class="fas fa-users" style="color: #00a8b5;"></i> Danışan Seçimi</span>
                     </div>
-                    <div class="flex gap-2 mb-2">
+                    <div class="mb-2">
                         <input type="text" class="search-box" id="danisanSearch" placeholder="Danışan Ara..." oninput="filtreleList('danisanSearch', 'danisanListe')">
-                        <button class="btn-submit !p-2" onclick="danisanEklePrompt()" title="Yeni Danışan Ekle">
-                            <i class="fas fa-user-plus text-xs"></i>
-                        </button>
                     </div>
                     <div class="list-scroll-area" id="danisanListe">
                         <p class="text-xs text-center text-slate-400 py-6">Yükleniyor...</p>
@@ -258,21 +255,17 @@
             <div class="lg:col-span-3 card flex flex-col justify-between">
                 <div>
                     <div class="card-title">
-                        <span><i class="fas fa-tags" style="color: #00a8b5;"></i> Hizmet Tanımı</span>
+                        <span><i class="fas fa-tags" style="color: #00a8b5;"></i> Yeni Hizmet Tanımla</span>
                     </div>
-                    <div class="mb-1">
-                        <label class="block text-[0.7rem] font-bold text-slate-500 mb-0.5">Hizmet Adı</label>
-                        <input type="text" id="libHizmetAdi" placeholder="Örn: Lazer Epilasyon">
+                    <div class="mb-1 mt-3">
+                        <label class="block text-[0.7rem] font-bold text-slate-500 mb-0.5">Hizmet / Kategori Adı</label>
+                        <input type="text" id="libHizmetKategori" placeholder="Örn: Lazer Epilasyon">
                     </div>
-                    <div class="mb-1">
-                        <label class="block text-[0.7rem] font-bold text-slate-500 mb-0.5">Hizmet Kategorisi</label>
-                        <input type="text" id="libHizmetKategori" placeholder="Örn: Cilt Bakımı">
-                    </div>
-                    <div class="mb-2">
+                    <div class="mb-2 mt-2">
                         <label class="block text-[0.7rem] font-bold text-slate-500 mb-0.5">İşlem Süresi (Dk)</label>
                         <input type="number" id="libHizmetSuresi" placeholder="Örn: 45">
                     </div>
-                    <button class="btn-submit w-full mb-2" onclick="hizmetKutuphaneKaydet()">
+                    <button class="btn-submit w-full mb-2 mt-2" onclick="hizmetKutuphaneKaydet()">
                         <i class="fas fa-plus text-xs"></i> Kütüphaneye Ekle
                     </button>
                     <div class="list-scroll-area !h-[80px]" id="kutuphaneListesi">
@@ -382,10 +375,10 @@
             </div>
         </div>
     </div>
+    
     <div id="biletModal">
         <div class="bilet-container">
-            <div class="bilet-body" id="biletIcerik">
-                </div>
+            <div class="bilet-body" id="biletIcerik"></div>
             <div class="bilet-actions">
                 <button onclick="window.print()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded text-center text-xs"><i class="fas fa-print mr-1"></i> Yazdır</button>
                 <button onclick="biletKapat()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 rounded text-center text-xs">Kapat</button>
@@ -395,21 +388,18 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // --- BİLET KONTROLÜ (Giriş yapılmış mı?) ---
             let aktifKullanici = JSON.parse(localStorage.getItem('aktifKullanici'));
-            
-            // Eğer bileti yoksa ana kapıya (index.html) gönder
             if (!aktifKullanici) {
                 window.location.href = "index.html";
                 return;
             }
-
-            // --- BİLETİ OLAN HERKES İÇİN NORMAL İŞLEYİŞ ---
             const bugun = new Date().toISOString().slice(0, 10);
             document.getElementById('paketIlkGirisTarihi').value = bugun;
             veriYukleleriGeriCagır();
         });
-        const API_URL = "https://script.google.com/macros/s/AKfycbycLcqeKr2ERvi-HisKboLMM7cFfq1r_5tRfS60uWqTEaiBJN31D1odAkfShqYtaU4owQ/exec";
+        
+        // 🚨 LÜTFEN KENDİ YENİ GOOGLE APPS SCRIPT WEB APP URL'NİZİ BURAYA YAPIŞTIRIN:
+        const API_URL = "https://script.google.com/macros/s/AKfycbx6fWf_rPacPSY0VdKaq5DAMuT6EQTFu5CA7GK9qRwQTNep3eMMwA0jZcIT9OQz76EH8g/exec";
         
         let danisanlar = [];
         let uzmanlar = [];
@@ -417,6 +407,8 @@
         let aktifDanisan = null;
         let aktifUzman = null;
         let aktifTip = 'tek';
+        let aktifArsivListesi = []; // Bilet yazdırma için global aktif filtreli arşiv
+        let genelArsivTumu = [];
 
         let kartDurumState = {
             hizmetNo: "",
@@ -492,10 +484,11 @@
 
             jsonpFetch("getkullanicilar", "cb_kullanicilar").then(res => {
                 let tumUye = getSafeArray(res);
+                // 🚨 SADECE UZMAN FİLTRESİ
                 uzmanlar = tumUye.filter(u => {
                     const vals = Object.values(u);
                     let r = String(u.rol || u.Rol || u.ROL || vals[4] || "").toLowerCase();
-                    return r.includes("uzman") || r.includes("admin") || r.includes("müdür");
+                    return r.includes("uzman");
                 });
                 renderUzmanlar();
             });
@@ -527,14 +520,6 @@
                     <div class="flex flex-col">
                         <span class="item-primary-text">${dAd}</span>
                         <span class="text-[0.68rem] text-slate-400">ID: ${dId}</span>
-                    </div>
-                    <div class="flex gap-1" onclick="event.stopPropagation();">
-                        <button onclick="danisanDuzenle('${dId}', '${dAd}')" class="text-teal-600 hover:text-teal-800 p-1 text-xs" title="Düzenle">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="danisanSil('${dId}')" class="text-rose-600 hover:text-rose-800 p-1 text-xs" title="Sil">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
                     </div>
                 `;
                 div.appendChild(row);
@@ -569,7 +554,6 @@
             });
         }
 
-        /* 🚀 ONARILAN DİNAMİK YAKALAMA MİMARİSİ: İndis isimleri tam eşleşecek şekilde düzeltildi */
         function renderHizmetKutuphane() {
             const div = document.getElementById('kutuphaneListesi');
             const select = document.getElementById('hizmetSecimi');
@@ -586,24 +570,33 @@
             
             let gecerliHizmetSayisi = 0;
             liste.forEach((h) => {
-                // Sizin belirttiğiniz net e-tablo indis isimleri tam olarak eşleştirildi
+                let hId = h.hizmetid || h.id || h.ID || "";
                 let hAd = h.hizmetAdiid || h["hizmetAdiid"] || h.hizmetadiid;
                 let hSure = h.hizmetislemSuresi || h["hizmetislemSuresi"] || h.hizmetismsure;
-                let hKat = h.hizmetKategori || h["hizmetKategori"] || "";
                 
                 if (!hAd || String(hAd).trim() === "") return; 
                 gecerliHizmetSayisi++;
 
+                const safeId = String(hId).trim();
                 const safeAd = String(hAd).trim();
                 const safeSure = String(hSure).trim() || "0";
-                const safeKat = String(hKat).trim() ? ` [${String(hKat).trim()}]` : "";
 
                 if (div) {
                     const row = document.createElement('div');
                     row.className = "list-item-row !mb-1 !p-1.5 flex justify-between items-center";
                     row.innerHTML = `
-                        <span class="item-primary-text">✨ ${safeAd} <small class="text-slate-400 font-normal">${safeKat}</small></span>
-                        <span class="text-[0.7rem] text-slate-400 font-bold">${safeSure} dk</span>
+                        <div class="flex flex-col flex-1 truncate">
+                            <span class="item-primary-text truncate">✨ ${safeAd}</span>
+                            <span class="text-[0.65rem] text-slate-400 font-bold">${safeSure} dk</span>
+                        </div>
+                        <div class="flex gap-1 ml-2" onclick="event.stopPropagation();">
+                            <button onclick="hizmetDuzenle('${safeId}', '${safeAd.replace(/'/g, "\\'")}', '${safeSure}')" class="text-teal-600 hover:text-teal-800 p-1.5 text-xs" title="Düzenle">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="hizmetSil('${safeId}')" class="text-rose-600 hover:text-rose-800 p-1.5 text-xs" title="Sil">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                     `;
                     div.appendChild(row);
                 }
@@ -612,7 +605,7 @@
                     const opt = document.createElement('option');
                     opt.value = safeAd; 
                     opt.dataset.sure = safeSure;
-                    opt.text = `${safeAd} (${safeSure} dk)${safeKat}`;
+                    opt.text = `${safeAd} (${safeSure} dk)`;
                     select.appendChild(opt);
                 }
             });
@@ -672,53 +665,47 @@
             kartDurumState.hizmetPaketTercihi = select.value;
         }
 
-        function danisanEklePrompt() {
-            let ad = prompt("Yeni Danışan Adı Soyadı giriniz:");
-            if(!ad || !ad.trim()) return;
-            jsonpFetch(`kaydetdanisan&danisanAdiSoyadi=${encodeURIComponent(ad.trim())}`, "cb_ekledanisan").then(() => {
-                showToast("Danışan başarıyla eklendi.");
-                veriYukleleriGeriCagır();
+        function hizmetSil(id) {
+            if(!confirm("Bu hizmeti kütüphaneden silmek istediğinize emin misiniz?")) return;
+            jsonpFetch(`silhizmetkutuphane&id=${id}`, "cb_silhizmet").then(() => {
+                showToast("Hizmet kütüphaneden silindi.");
+                jsonpFetch("gethizmetler", "cb_hizmetler_tazele").then(res => {
+                    hizmetKutuphanesi = getSafeArray(res);
+                    renderHizmetKutuphane();
+                });
             });
         }
 
-        function danisanDuzenle(id, eskiIsim) {
-            let yeni = prompt("Danışan adını düzenleyin:", eskiIsim);
-            if(!yeni || yeni.trim() === eskiIsim) return;
-            jsonpFetch(`guncelledanisan&id=${id}&danisanAdiSoyadi=${encodeURIComponent(yeni.trim())}`, "cb_guncelledanisan").then(() => {
-                showToast("Danışan kaydı güncellendi.");
-                veriYukleleriGeriCagır();
+        function hizmetDuzenle(id, eskiAd, eskiSure) {
+            let yeniAd = prompt("Hizmet / Kategori adını düzenleyin:", eskiAd);
+            if(!yeniAd || yeniAd.trim() === "") return;
+            let yeniSure = prompt("İşlem süresini (dk) düzenleyin:", eskiSure);
+            if(!yeniSure || yeniSure.trim() === "") return;
+
+            jsonpFetch(`guncellehizmetkutuphane&id=${id}&ad=${encodeURIComponent(yeniAd.trim())}&sure=${encodeURIComponent(yeniSure.trim())}`, "cb_gunchizmet").then(() => {
+                showToast("Hizmet başarıyla güncellendi.");
+                jsonpFetch("gethizmetler", "cb_hizmetler_tazele").then(res => {
+                    hizmetKutuphanesi = getSafeArray(res);
+                    renderHizmetKutuphane();
+                });
             });
         }
 
-        function danisanSil(id) {
-            if(!confirm("Bu danışanı silmek istediğinize emin misiniz?")) return;
-            jsonpFetch(`sildanisan&id=${id}`, "cb_sildanisan").then(() => {
-                showToast("Danışan kaydı silindi.");
-                aktifDanisan = null;
-                veriYukleleriGeriCagır();
-            });
-        }
-
-        /* 🚀 ONARILAN KAYIT FONKSİYONU: Google Sheets parametre yazımları ve eklenen hizmetKategori alanı entegre edildi */
         function hizmetKutuphaneKaydet() {
-            const adInput = document.getElementById('libHizmetAdi');
             const kategoriInput = document.getElementById('libHizmetKategori');
             const sureInput = document.getElementById('libHizmetSuresi');
             
-            if(!adInput || !sureInput || !kategoriInput) return;
+            if(!kategoriInput || !sureInput) return;
             
-            const ad = adInput.value.trim();
-            const kategori = kategoriInput.value.trim();
+            const kategoriAd = kategoriInput.value.trim();
             const sure = sureInput.value.trim();
             
-            if(!ad || !sure) return alert("Hizmet adı ve İşlem süresi alanları zorunludur.");
+            if(!kategoriAd || !sure) return alert("Hizmet / Kategori adı ve İşlem süresi alanları zorunludur.");
             
-            // Sizin indislerinize uygun parametre yapılandırması
-            let queryUrl = `kaydethizmetkutuphane&hizmetAdiid=${encodeURIComponent(ad)}&hizmetKategori=${encodeURIComponent(kategori)}&hizmetislemSuresi=${encodeURIComponent(sure)}`;
+            let queryUrl = `kaydethizmetkutuphane&hizmetAdiid=${encodeURIComponent(kategoriAd)}&hizmetislemSuresi=${encodeURIComponent(sure)}`;
             
             jsonpFetch(queryUrl, "cb_hizmetekle").then(() => {
                 showToast("Kütüphaneye eklendi.");
-                adInput.value = "";
                 kategoriInput.value = "";
                 sureInput.value = "";
                 
@@ -739,7 +726,12 @@
             
             jsonpFetch("getpaketler", "cb_sonpaket").then(res => {
                 const tumu = getSafeArray(res);
-                const dPaketleri = tumu.filter(p => String(p["danisan"] || p.danisan || "").trim() === String(dAd).trim());
+                const dPaketleri = tumu.filter(p => {
+                    const vals = Object.values(p);
+                    const pd = vals[2] || p["danisan"] || p.danisan || "";
+                    return String(pd).trim() === String(dAd).trim();
+                });
+                
                 if(dPaketleri.length === 0) return alert("Bu danışana ait geçmiş paket bulunamadı.");
                 
                 dPaketleri.sort((a,b) => String(b["id"] || b.id).localeCompare(String(a["id"] || a.id)));
@@ -803,8 +795,6 @@
             });
         }
 
-        let genelArsivTumu = [];
-
         function paketListesiniGuncelle() {
             const div = document.getElementById('paketlerListesi');
             if(!aktifDanisan) {
@@ -821,7 +811,11 @@
                 }
                 genelArsivTumu = tumArsiv;
 
-                const dPaketleri = tumArsiv.filter(p => String(p["danisan"] || p.danisan || "").trim() === String(dAd).trim());
+                const dPaketleri = tumArsiv.filter(p => {
+                    const vals = Object.values(p);
+                    const pd = vals[2] || p["danisan"] || p.danisan || "";
+                    return String(pd).trim() === String(dAd).trim();
+                });
 
                 if(dPaketleri.length === 0) {
                     div.innerHTML = `<p class="text-center text-slate-400 py-4">Bu danışana ait aktif takip kartı bulunmuyor. Yukarıdan paket tanımlayabilirsiniz.</p>`;
@@ -830,16 +824,17 @@
 
                 div.innerHTML = "";
                 dPaketleri.forEach(pkg => {
-                    const rId = pkg.id || pkg["id"];
-                    const tSeans = parseInt(pkg.seansSayisi || pkg.seanssayisi || 1);
-                    const kSeans = parseInt(pkg.kalanSeans || pkg.kalanseans || 0);
-                    const tTutar = parseFloat(pkg.toplamTutar || pkg.toplamtutar || 0);
-                    const oTutar = parseFloat(pkg.odenenMiktar || pkg.odenenmiktar || 0);
+                    const vals = Object.values(pkg);
+                    const rId = vals[0] || pkg.id || pkg["id"];
+                    const tSeans = parseInt(vals[5] || pkg.seansSayisi || pkg.seanssayisi || 1);
+                    const kSeans = parseInt(vals[10] || pkg.kalanSeans || pkg.kalanseans || 0);
+                    const tTutar = parseFloat(vals[6] || pkg.toplamTutar || pkg.toplamtutar || 0);
+                    const oTutar = parseFloat(vals[7] || pkg.odenenMiktar || pkg.odenenmiktar || 0);
                     const kBorc = tTutar - oTutar;
-                    const hTercih = pkg.hizmetTercihi || pkg.hizmettercihi || "";
-                    const pTarih = pkg.paketTarihi || pkg.pakettarihi || "";
+                    const hTercih = vals[3] || pkg.hizmetTercihi || pkg.hizmettercihi || "";
+                    const pTarih = vals[11] || pkg.paketTarihi || pkg.pakettarihi || "";
 
-                    let seansGecmisiRaw = pkg.seansDurumu || pkg.seansdurumu || "";
+                    let seansGecmisiRaw = vals[9] || pkg.seansDurumu || pkg.seansdurumu || "";
                     let parsedGecmis = {};
                     if(seansGecmisiRaw.includes("{")) {
                         try { parsedGecmis = JSON.parse(seansGecmisiRaw); } catch(e){}
@@ -948,8 +943,10 @@
                 const tumu = getSafeArray(res);
                 const pkg = tumu.find(p => String(p.id).trim() === String(pkgId).trim());
                 if(!pkg) return;
+                
+                const vals = Object.values(pkg);
 
-                let seansGecmisiRaw = pkg.seansDurumu || pkg.seansdurumu || "";
+                let seansGecmisiRaw = vals[9] || pkg.seansDurumu || pkg.seansdurumu || "";
                 let parsedGecmis = {};
                 if(seansGecmisiRaw.includes("{")) {
                     try { parsedGecmis = JSON.parse(seansGecmisiRaw); } catch(e){}
@@ -961,7 +958,7 @@
                     saat: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
                 };
 
-                let tSeans = parseInt(pkg.seansSayisi || pkg.seanssayisi || 1);
+                let tSeans = parseInt(vals[5] || pkg.seansSayisi || pkg.seanssayisi || 1);
                 let islenmisSayisi = 0;
                 for(let k in parsedGecmis) {
                     if(parsedGecmis[k].durum === "geldi" || parsedGecmis[k].durum === "gelmedi" || parsedGecmis[k].durum === "iptal") {
@@ -984,6 +981,30 @@
                     showToast(`Seans ${sNo} başarıyla işlendi.`);
                     paketListesiniGuncelle();
                     arsivDokumuYap();
+
+                    if (rTar !== "-" && rSaat !== "-") {
+                        let sureVal = parseInt(vals[4] || pkg.sure || pkg.hizmetpaketsuresi || 30);
+                        
+                        let parts = rSaat.split(':');
+                        let d = new Date();
+                        d.setHours(parseInt(parts[0]), parseInt(parts[1]), 0);
+                        d.setMinutes(d.getMinutes() + sureVal);
+                        let eH = String(d.getHours()).padStart(2, '0');
+                        let eM = String(d.getMinutes()).padStart(2, '0');
+                        let timeStr = `${rSaat} - ${eH}:${eM}`;
+
+                        let catStr = vals[3] || pkg.hizmetTercihi || pkg.hizmettercihi || "Seans İşlemi";
+                        let uzmStr = vals[1] || pkg.uzman || "Bilinmiyor";
+                        let danStr = vals[2] || pkg.danisan || "Bilinmiyor";
+                        let durationStr = sureVal + " Dk";
+                        let notStr = sNo + ". Seans Randevusu Olarak Otomatik Oluşturuldu.";
+
+                        let randevuQuery = `kaydetrandevu&tarih=${encodeURIComponent(rTar)}&saat=${encodeURIComponent(timeStr)}&uzman=${encodeURIComponent(uzmStr)}&danisan=${encodeURIComponent(danStr)}&kategori=${encodeURIComponent(catStr)}&sure=${encodeURIComponent(durationStr)}&notlar=${encodeURIComponent(notStr)}&_=${Date.now()}`;
+                        
+                        jsonpFetch(randevuQuery, "cb_otomatikrandevu").then(() => {
+                            showToast("Sonraki seans başarıyla Randevu Takvimi'ne eklendi! 📅");
+                        });
+                    }
                 });
             });
         }
@@ -1004,25 +1025,30 @@
             });
         }
 
-        // 🎯 BILET / ADISYON DETAYLARINI OLUŞTURMA VE MODAL AÇMA FONKSİYONU
         function biletYazdirmaPenceresiAc(id) {
             let kayit = null;
-            if(typeof globalArsiv !== 'undefined' && globalArsiv.length > 0) {
-                kayit = globalArsiv.find(x => (x.id || x.hizmetNo) === id);
+            if(typeof aktifArsivListesi !== 'undefined' && aktifArsivListesi.length > 0) {
+                kayit = aktifArsivListesi.find(x => x.id === id);
             }
             if(!kayit && typeof genelArsivTumu !== 'undefined' && genelArsivTumu.length > 0) {
                 kayit = genelArsivTumu.find(x => (x.id || x.hizmetNo) === id);
             }
 
             if(!kayit) {
-                showToast("Sözleşme kaydı bulunamadı! Lütfen tabloyu yenileyin.");
+                showToast("Kayıt bulunamadı! Lütfen tabloyu yenileyin.");
                 return;
             }
 
-            let tTutar = parseFloat(kayit.toplamTutar || kayit.toplamtutar || 0);
-            let oMiktar = parseFloat(kayit.odenenMiktar || kayit.odenenmiktar || kayit.hizmetAraOdeme || 0);
+            let tTutarText = String(kayit.toplamTutar || kayit.toplamtutar || "0").replace(/[^0-9.,]/g, '');
+            let oMiktarText = String(kayit.odenenMiktar || kayit.odenenmiktar || kayit.hizmetAraOdeme || "0").replace(/[^0-9.,]/g, '');
+
+            let tTutar = parseFloat(tTutarText) || 0;
+            let oMiktar = parseFloat(oMiktarText) || 0;
             let kBorc = tTutar - oMiktar;
             let bugun = new Date().toLocaleDateString('tr-TR') + " " + new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+
+            let kayitTar = kayit.paketTarihi || kayit.pakettarihi || kayit.kayitTarihi || '-';
+            if (kayitTar === "-") kayitTar = kayit.randevuTarihi || '-';
 
             let biletHtml = `
                 <div class="bilet-header">
@@ -1031,12 +1057,12 @@
                     <div style="font-size:0.7rem; margin-top:5px; color:#555;">Fiş Tarihi: ${bugun}</div>
                 </div>
                 <div class="bilet-row">
-                    <span>Sözleşme No:</span>
+                    <span>İşlem / Sözleşme No:</span>
                     <strong>${id}</strong>
                 </div>
                 <div class="bilet-row">
                     <span>Tarih:</span>
-                    <span>${kayit.paketTarihi || kayit.pakettarihi || kayit.kayitTarihi || '-'}</span>
+                    <span>${kayitTar}</span>
                 </div>
                 <div class="bilet-row">
                     <span>Danışan:</span>
@@ -1089,14 +1115,74 @@
             const bTar = document.getElementById('archiveBaslangic').value;
             const sTar = document.getElementById('archiveBitis').value;
 
-            jsonpFetch("getpaketler", "cb_arsivdokum").then(res => {
-                let tumArsiv = getSafeArray(res);
-                let filtrelenmis = tumArsiv.filter(p => String(p.danisan || "").trim() === String(dAd).trim());
+            Promise.all([
+                jsonpFetch("getpaketler", "cb_arsivdokum_paket"),
+                jsonpFetch("getrandevular", "cb_arsivdokum_randevu")
+            ]).then(([resPaket, resRandevu]) => {
+                let tumPaketler = getSafeArray(resPaket);
+                let tumRandevular = getSafeArray(resRandevu);
 
-                if(bTar) filtrelenmis = filtrelenmis.filter(p => (p.paketTarihi || p.kayitTarihi || p.pakettarihi || p.kayittarihi) >= bTar);
-                if(sTar) filtrelenmis = filtrelenmis.filter(p => (p.paketTarihi || p.kayitTarihi || p.pakettarihi || p.kayittarihi) <= sTar);
+                // Hizmet Paket Giriş sayfası (Kullanıcının talep ettiği harf ve sütun indisleri ile eşleme)
+                let dPaketleri = tumPaketler.filter(p => {
+                    const vals = Object.values(p);
+                    const pDanisan = vals[2] || p.danisan || p["Danışan"] || ""; 
+                    return String(pDanisan).trim() === String(dAd).trim();
+                }).map(p => {
+                    const vals = Object.values(p);
+                    return {
+                        id: vals[0] || "-", // A sütunu
+                        kayitTarihi: vals[11] || "-", // L sütunu (Index 11)
+                        uzman: vals[1] || "-", // B sütunu (Index 1)
+                        danisan: vals[2] || "-", // C sütunu (Index 2)
+                        hizmetTercihi: vals[3] || "-", // D sütunu (Index 3)
+                        sure: vals[4] || "-", // E sütunu (Index 4)
+                        seansSayisi: vals[5] || "-", // F sütunu (Index 5)
+                        toplamTutar: vals[6] || "-", // G sütunu (Index 6)
+                        odenenMiktar: vals[7] || "-", // H sütunu (Index 7)
+                        seansDurumu: vals[9] || "-", // J sütunu (Index 9)
+                        kalanSeans: vals[10] || "-", // K sütunu (Index 10)
+                        paketTarihi: vals[11] || "-", // L sütunu (Index 11)
+                        randevuTarihi: vals[12] || "-", // M sütunu (Index 12)
+                        randevuSaati: vals[13] || "-", // N sütunu (Index 13)
+                        _kaynak: 'paket'
+                    };
+                });
 
+                // Randevu Takvimi sayfası eşlemeleri
+                let dRandevular = tumRandevular.filter(r => {
+                    const vals = Object.values(r);
+                    const rDanisan = vals[4] || r.danisan || r["Danışan"] || ""; 
+                    return String(rDanisan).trim() === String(dAd).trim();
+                }).map(r => {
+                    const vals = Object.values(r);
+                    return {
+                        id: vals[0] || "-", // A sütunu
+                        kayitTarihi: vals[1] || "-", // B sütunu
+                        uzman: vals[3] || "-", // D sütunu
+                        danisan: vals[4] || "-", // E sütunu
+                        hizmetTercihi: vals[5] || "-", // F sütunu
+                        sure: vals[6] || "-", // G sütunu
+                        seansSayisi: "-",
+                        toplamTutar: "-",
+                        odenenMiktar: "-",
+                        seansDurumu: "Takvim Randevusu",
+                        kalanSeans: "-",
+                        paketTarihi: "-",
+                        randevuTarihi: vals[1] || "-", 
+                        randevuSaati: vals[2] || "-",
+                        _kaynak: 'randevu'
+                    };
+                });
+
+                // Verileri birleştir
+                let filtrelenmis = [...dPaketleri, ...dRandevular];
+
+                if(bTar) filtrelenmis = filtrelenmis.filter(p => (p.paketTarihi || p.kayitTarihi || p.randevuTarihi) >= bTar);
+                if(sTar) filtrelenmis = filtrelenmis.filter(p => (p.paketTarihi || p.kayitTarihi || p.randevuTarihi) <= sTar);
+
+                aktifArsivListesi = filtrelenmis; // Bilet yazdırma için global alana aktarıldı
                 tBody.innerHTML = "";
+
                 if(filtrelenmis.length === 0) {
                     tBody.innerHTML = `<tr><td colspan="15" class="text-center text-slate-400 py-4">Filtre kriterlerine uygun arşiv kaydı bulunamadı.</td></tr>`;
                     return;
@@ -1104,7 +1190,7 @@
 
                 filtrelenmis.forEach(row => {
                     const tr = document.createElement('tr');
-                    const rId = row.id;
+                    const rId = row.id || "-";
                     
                     let seansHücreIcerigi = row.seansDurumu || row.seansdurumu || "";
                     if(seansHücreIcerigi.includes("{")) {
@@ -1116,31 +1202,49 @@
                         } catch(e){}
                     }
 
+                    let tutarText = row.toplamTutar === "-" ? "-" : "₺" + (row.toplamTutar || "0");
+                    let odenenText = row.odenenMiktar === "-" ? "-" : "₺" + (row.odenenMiktar || "0");
+                    let sureText = row.sure === "-" ? "-" : (row.sure || "0") + " dk";
+
+                    // İşlemler butonlarının kararlaştırılması
+                    let biletButonu = `<button onclick="biletYazdirmaPenceresiAc('${rId}')" class="bg-purple-50 hover:bg-purple-100 text-purple-600 text-[0.7rem] font-bold px-2 py-1 rounded transition-all mr-1" title="Termal Bilet Çıktısı"><i class="fas fa-ticket-alt"></i> Bilet</button>`;
+                    let silButonu = `<button onclick="arsivSatirSil('${rId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[0.7rem] font-bold px-2 py-1 rounded"><i class="fas fa-trash-alt"></i> Sil</button>`;
+                    
+                    let aksiyonButonlari = biletButonu;
+                    
+                    if (row._kaynak === 'paket') {
+                        let odenenMiktarGuvenli = String(row.odenenMiktar).replace("₺", "").trim() || 0;
+                        aksiyonButonlari += `<button onclick="arsivSatirDuzenle('${rId}', '${odenenMiktarGuvenli}')" class="bg-teal-50 hover:bg-teal-100 text-teal-600 text-[0.7rem] font-bold px-2 py-1 rounded mr-1"><i class="fas fa-edit"></i> Düzenle</button>`;
+                    }
+                    
+                    aksiyonButonlari += silButonu;
+
                     tr.innerHTML = `
                         <td class="font-extrabold text-slate-700">${rId}</td>
-                        <td>${row.kayitTarihi || row.kayittarihi || "-"}</td>
-                        <td class="font-medium text-slate-600">${row.uzman || row.uzman || "-"}</td>
-                        <td class="font-bold text-slate-800">${row.danisan || row.danisan || "-"}</td>
-                        <td class="font-semibold text-teal-700">${row.hizmetTercihi || row.hizmettercihi || "-"}</td>
-                        <td>${row.sure || row.sure || "0"} dk</td>
-                        <td class="font-bold text-center">${row.seansSayisi || row.seanssayisi || "1"}</td>
-                        <td class="font-bold text-slate-700">₺${row.toplamTutar || row.toplamtutar || "0"}</td>
-                        <td class="font-bold text-emerald-600">₺${row.odenenMiktar || row.odenenmiktar || "0"}</td>
+                        <td>${row.kayitTarihi || "-"}</td>
+                        <td class="font-medium text-slate-600">${row.uzman || "-"}</td>
+                        <td class="font-bold text-slate-800">${row.danisan || "-"}</td>
+                        <td class="font-semibold text-teal-700">${row.hizmetTercihi || "-"}</td>
+                        <td>${sureText}</td>
+                        <td class="font-bold text-center">${row.seansSayisi || "1"}</td>
+                        <td class="font-bold text-slate-700">${tutarText}</td>
+                        <td class="font-bold text-emerald-600">${odenenText}</td>
                         <td class="text-xs max-w-[150px] truncate" title="${seansHücreIcerigi}">${seansHücreIcerigi}</td>
-                        <td class="font-bold text-center text-rose-600">${row.kalanSeans || row.kalanseans || "0"}</td>
-                        <td>${row.paketTarihi || row.pakettarihi || "-"}</td>
-                        <td>${row.randevuTarihi || row.randevutarihi || "-"}</td>
-                        <td>${row.randevuSaati || row.randevusaati || "-"}</td>
+                        <td class="font-bold text-center text-rose-600">${row.kalanSeans || "0"}</td>
+                        <td>${row.paketTarihi || "-"}</td>
+                        <td>${row.randevuTarihi || "-"}</td>
+                        <td>${row.randevuSaati || "-"}</td>
                         <td>
                             <div class="flex gap-2 justify-end">
-                                <button onclick="biletYazdirmaPenceresiAc('${rId}')" class="bg-purple-50 hover:bg-purple-100 text-purple-600 text-[0.7rem] font-bold px-2 py-1 rounded transition-all mr-1" title="Termal Bilet Çıktısı"><i class="fas fa-ticket-alt"></i> Bilet</button>
-                                <button onclick="arsivSatirDuzenle('${rId}', '${row.odenenMiktar || row.odenenmiktar || 0}')" class="bg-teal-50 hover:bg-teal-100 text-teal-600 text-[0.7rem] font-bold px-2 py-1 rounded"><i class="fas fa-edit"></i> Düzenle</button>
-                                <button onclick="arsivSatirSil('${rId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[0.7rem] font-bold px-2 py-1 rounded"><i class="fas fa-trash-alt"></i> Sil</button>
+                                ${aksiyonButonlari}
                             </div>
                         </td>
                     `;
                     tBody.appendChild(tr);
                 });
+            }).catch(err => {
+                console.error("Arşiv Döküm Veri Çekme Hatası:", err);
+                tBody.innerHTML = `<tr><td colspan="15" class="text-center text-rose-500 font-bold py-4">Veriler yüklenirken bir bağlantı hatası oluştu. Lütfen tekrar deneyin.</td></tr>`;
             });
         }
 
